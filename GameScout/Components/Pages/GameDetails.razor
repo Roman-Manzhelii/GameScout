@@ -1,0 +1,34 @@
+﻿@using GameDetailsModel = GameScout.Domain.Models.GameDetails
+@page "/GameDetails/{id:int}"
+@inject IGameCatalogService Catalog
+
+<h3>Game details</h3>
+<p>Id: @id</p>
+@if (_loading)
+{
+    <p>Loading...</p>
+}
+else if (_details is null)
+{
+
+    <p>No details</p>
+}
+else
+{
+    <h4>@_details.Name</h4>
+    <p>@_details.Description</p>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    private GameDetailsModel? _details;
+    private bool _loading;
+
+    protected override Task OnParametersSetAsync()
+    {
+        _loading = true;
+        _details = null;
+        _loading = false;
+        return Task.CompletedTask;
+    }
+}

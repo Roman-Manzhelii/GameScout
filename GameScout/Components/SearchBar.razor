@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+<InputText @bind-Value="Value" placeholder="Search games..." class="form-control" />
+<button class="btn btn-primary mt-2" @onclick="HandleSearch">Search</button>
+
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> OnSearch { get; set; }
+
+    private Task HandleSearch() => OnSearch.InvokeAsync(Value);
+}

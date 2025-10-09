@@ -1,0 +1,16 @@
+﻿<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">@Game?.Name</h5>
+        <p class="card-text">
+            @if (Game?.Metacritic is int m)
+            {
+                <span>MC: @m</span>
+            }
+        </p>
+        <a class="btn btn-outline-secondary" href="@($"/GameDetails/{Game?.Id}")">Details</a>
+    </div>
+</div>
+
+@code {
+    [Parameter] public GameSummary? Game { get; set; }
+}

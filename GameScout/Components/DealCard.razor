@@ -1,0 +1,15 @@
+﻿<div class="card mb-2">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <strong>@Deal?.Store</strong>
+            <span>@Deal?.Price.ToString("0.00")</span>
+        </div>
+        <a href="@Deal?.Url" target="_blank" rel="noopener">Open</a>
+    </div>
+</div>
+
+@using DealModel = GameScout.Domain.Models.Deal
+
+@code {
+    [Parameter] public DealModel? Deal { get; set; }
+}

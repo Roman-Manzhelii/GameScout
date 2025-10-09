@@ -1,0 +1,16 @@
+﻿<div class="d-flex gap-2 align-items-end mb-3">
+    <select class="form-select" @bind="Sort">
+        <option value="@SortBy.Name">Name</option>
+        <option value="@SortBy.Metacritic">Metacritic</option>
+        <option value="@SortBy.ReleaseDate">Release date</option>
+        <option value="@SortBy.Price">Price</option>
+    </select>
+    <button class="btn btn-secondary" @onclick="Apply">Apply</button>
+
+</div>
+
+@code {
+    [Parameter] public SortBy Sort { get; set; } = SortBy.Name;
+    [Parameter] public EventCallback<SortBy> OnApply { get; set; }
+    private Task Apply() => OnApply.InvokeAsync(Sort);
+}

@@ -1,0 +1,17 @@
+﻿@page "/backlog"
+@inject AppState State
+
+<h3>Backlog</h3>
+@if (State.Backlog.Count == 0)
+{
+    <p>Empty</p>
+}
+else
+{
+    <ul>
+        @foreach (var s in State.Backlog)
+        {
+            <li>@s.Name — @s.Status</li>
+        }
+    </ul>
+}
