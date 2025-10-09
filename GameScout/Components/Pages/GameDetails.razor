@@ -1,10 +1,10 @@
-﻿@using GameDetailsModel = GameScout.Domain.Models.GameDetails
-@page "/GameDetails/{id:int}"
+﻿@page "/GameDetails/{id:int}"
 @rendermode InteractiveServer
 @inject IGameCatalogService Catalog
+@using GameDetailsModel = GameScout.Domain.Models.GameDetails
 
 <h3>Game details</h3>
-<p>Id: @id</p>
+
 @if (_loading)
 {
     <p>Loading...</p>
@@ -17,7 +17,29 @@ else if (_details is null)
 else
 {
     <h4>@_details.Name</h4>
-    <p>@_details.Description</p>
+    @if (_details.Metacritic is int mc)
+    {
+        <p>Metacritic: @mc</p>
+    }
+    @if (_details.Platforms.Count > 0)
+    {
+        <p>Platforms: @string.Join(", ", _details.Platforms)</p>
+    }
+    @if (_details.Genres.Count > 0)
+    {
+        <p>Genres: @string.Join(", ", _details.Genres)</p>
+    }
+    <p class="mb-3" style="white-space:pre-wrap">@_details.Description</p>
+
+    @if (_details.Screenshots.Count > 0)
+    {
+        <div class="d-flex flex-wrap gap-2">
+            @foreach (var s in _details.Screenshots.Take(6))
+            {
+                <img src="@s" style="max-width:240px;height:auto" alt="screenshot" loading="lazy" />
+            }
+        </div>
+    }
 }
 
 @code {
@@ -25,11 +47,10 @@ else
     private GameDetailsModel? _details;
     private bool _loading;
 
-    protected override Task OnParametersSetAsync()
+    protected override async Task OnParametersSetAsync()
     {
         _loading = true;
-        _details = null;
+        _details = await Catalog.GetDetailsAsync(id);
         _loading = false;
-        return Task.CompletedTask;
     }
 }

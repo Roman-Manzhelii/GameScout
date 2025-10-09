@@ -9,6 +9,7 @@ using GameScout.Domain.Models;
 using GameScout.Services.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace GameScout.Services.Http;
 
@@ -121,8 +122,75 @@ public class RawgService : BaseHttpService, IGameCatalogService
         return (items, data.Count);
     }
 
-    public Task<GameDetails?> GetDetailsAsync(int id, CancellationToken ct = default)
-        => Task.FromResult<GameDetails?>(null);
+    // details cache
+    private static readonly Dictionary<int, (DateTimeOffset exp, GameDetails data)> _detailsCache = new();
+    private static readonly TimeSpan _detailsTtl = TimeSpan.FromMinutes(30);
+
+    public async Task<GameDetails?> GetDetailsAsync(int id, CancellationToken ct = default)
+    {
+        lock (_lock)
+            if (_detailsCache.TryGetValue(id, out var c) && c.exp > DateTimeOffset.UtcNow)
+                return c.data;
+
+        var keyQs = string.IsNullOrEmpty(_apiKey) ? "" : $"?key={_apiKey}";
+
+        // main details
+        using var resp = await _http.GetAsync($"games/{id}{keyQs}", ct);
+        resp.EnsureSuccessStatusCode();
+        await using var s1 = await resp.Content.ReadAsStreamAsync(ct);
+        var d = await JsonSerializer.DeserializeAsync<RawgDetails>(s1, _json, ct);
+        if (d is null) return null;
+
+        // screenshots
+        using var resp2 = await _http.GetAsync($"games/{id}/screenshots{keyQs}", ct);
+        resp2.EnsureSuccessStatusCode();
+        await using var s2 = await resp2.Content.ReadAsStreamAsync(ct);
+        var shots = await JsonSerializer.DeserializeAsync<RawgScreens>(s2, _json, ct);
+
+        var model = new GameDetails
+        {
+            Id = d.Id,
+            Name = d.Name ?? "",
+            Description = !string.IsNullOrWhiteSpace(d.DescriptionRaw)
+                ? d.DescriptionRaw!
+                : StripHtml(d.Description),
+            Metacritic = d.Metacritic,
+            Platforms = d.Platforms?.ConvertAll(p => p.Platform?.Name ?? "").FindAll(x => !string.IsNullOrWhiteSpace(x)) ?? new(),
+            Genres = d.Genres?.ConvertAll(g => g.Name ?? "").FindAll(x => !string.IsNullOrWhiteSpace(x)) ?? new(),
+            Screenshots = shots?.Results?.ConvertAll(x => x.Image ?? "").FindAll(x => !string.IsNullOrWhiteSpace(x)) ?? new()
+        };
+
+        lock (_lock) _detailsCache[id] = (DateTimeOffset.UtcNow.Add(_detailsTtl), model);
+        return model;
+    }
+
+    private static string StripHtml(string? html)
+    {
+        if (string.IsNullOrWhiteSpace(html)) return string.Empty;
+        var s = Regex.Replace(html, @"<(br|BR)\s*/?>", "\n");
+        s = Regex.Replace(s, @"</p\s*>", "\n\n");
+        s = Regex.Replace(s, @"<p(\s[^>]*)?>", string.Empty);
+        s = Regex.Replace(s, "<.*?>", string.Empty);
+        return WebUtility.HtmlDecode(s).Trim();
+    }
+
+
+    // DTOs for details
+    private sealed class RawgDetails
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? DescriptionRaw { get; set; }
+        public int? Metacritic { get; set; }
+        public List<PlatformWrapper>? Platforms { get; set; }
+        public List<NameWrapper>? Genres { get; set; }
+    }
+    private sealed class RawgScreens
+    {
+        public List<Shot>? Results { get; set; }
+        public sealed class Shot { public string? Image { get; set; } }
+    }
 
     private sealed class RawgListResponse
     {
