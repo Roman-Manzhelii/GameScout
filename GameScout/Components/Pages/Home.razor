@@ -1,4 +1,5 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @inject IGameCatalogService Catalog
 
 <PageTitle>GameScout</PageTitle>
@@ -18,7 +19,8 @@ else if (_items.Count == 0)
 }
 else
 {
-    foreach (var g in _items)
+    <p>Found @_total result(s).</p>
+    @foreach (var g in _items)
     {
         <GameCard Game="g" />
     }
@@ -28,15 +30,23 @@ else
     private readonly List<GameSummary> _items = new();
     private bool _loading;
     private SortBy _sort = SortBy.Name;
+    private int _page = 1, _pageSize = 20, _total;
 
     private Task SetSort(SortBy s) { _sort = s; return Task.CompletedTask; }
-    private Task Search(string? q)
+
+    private async Task Search(string? q)
     {
         _loading = true;
         StateHasChanged();
-        _items.Clear();
-        _loading = false;
-        return Task.CompletedTask;
-    }
 
+        var (items, total) = await Catalog.SearchAsync(
+            q, platforms: null, genres: null,
+            page: _page, pageSize: _pageSize, sort: _sort);
+
+        _items.Clear();
+        _items.AddRange(items);
+        _total = total;
+
+        _loading = false;
+    }
 }

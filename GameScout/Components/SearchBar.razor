@@ -1,12 +1,22 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
-
-<InputText @bind-Value="Value" placeholder="Search games..." class="form-control" />
-<button class="btn btn-primary mt-2" @onclick="HandleSearch">Search</button>
-
+﻿<InputText @bind-Value="Value" placeholder="Search games..." class="form-control" />
+<button class="btn btn-primary mt-2"
+        @onclick="HandleSearch"
+        disabled="@IsDisabled">
+    Search
+</button>
 
 @code {
     [Parameter] public string? Value { get; set; }
     [Parameter] public EventCallback<string?> OnSearch { get; set; }
 
-    private Task HandleSearch() => OnSearch.InvokeAsync(Value);
+    private bool _busy;
+    private bool IsDisabled => _busy || string.IsNullOrWhiteSpace(Value);
+
+    private async Task HandleSearch()
+    {
+        if (IsDisabled) return;
+        _busy = true;
+        try { await OnSearch.InvokeAsync(Value?.Trim()); }
+        finally { _busy = false; }
+    }
 }

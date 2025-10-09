@@ -1,8 +1,10 @@
-﻿using GameScout.Client.Pages;
+﻿using DotNetEnv;
 using GameScout.Components;
 using GameScout.Services.Abstractions;
 using GameScout.Services.Http;
 using GameScout.State;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
