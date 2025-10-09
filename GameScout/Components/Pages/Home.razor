@@ -5,8 +5,8 @@
 <PageTitle>GameScout</PageTitle>
 
 <h3>Search games</h3>
-<SearchBar OnSearch="Search" />
-<SortFilterBar OnApply="SetSort" />
+<SearchBar @bind-Text="_query" OnSearch="OnSearchClicked" Busy="_loading" />
+<SortFilterBar Sort="@_sort" OnApply="SetSort" />
 
 @if (_loading)
 {
@@ -14,7 +14,6 @@
 }
 else if (_items.Count == 0)
 {
-
     <p>Nothing found</p>
 }
 else
@@ -27,15 +26,29 @@ else
 }
 
 @code {
+    private string _query = "";
+
+    private Task OnSearchClicked() => Search(_query);
+
     private readonly List<GameSummary> _items = new();
     private bool _loading;
-    private SortBy _sort = SortBy.Name;
+    private SortBy _sort = SortBy.Metacritic;
     private int _page = 1, _pageSize = 20, _total;
+    private string? _lastQuery;
 
-    private Task SetSort(SortBy s) { _sort = s; return Task.CompletedTask; }
-
-    private async Task Search(string? q)
+    private async Task SetSort(SortBy s)
     {
+        if (_sort == s) return;
+        _sort = s;
+        if (!string.IsNullOrWhiteSpace(_lastQuery))
+            await Search(_lastQuery);
+    }
+
+    private async Task Search(string q)
+    {
+        _lastQuery = q;
+        if (string.IsNullOrWhiteSpace(q)) return;
+
         _loading = true;
         StateHasChanged();
 

@@ -1,2 +1,2 @@
 ﻿namespace GameScout.Domain.Enums;
-public enum SortBy { Name, Metacritic, ReleaseDate, Price }
+public enum SortBy { Name, Metacritic, ReleaseDate, Price, Rating }

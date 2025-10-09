@@ -1,22 +1,33 @@
-﻿<InputText @bind-Value="Value" placeholder="Search games..." class="form-control" />
+﻿<input class="form-control"
+       placeholder="Search games..."
+       value="@Text"
+       @oninput="OnInput" />
+
 <button class="btn btn-primary mt-2"
-        @onclick="HandleSearch"
+        @onclick="OnClick"
         disabled="@IsDisabled">
     Search
 </button>
 
 @code {
-    [Parameter] public string? Value { get; set; }
-    [Parameter] public EventCallback<string?> OnSearch { get; set; }
+    // 2-way bindable parameter
+    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public EventCallback<string> TextChanged { get; set; }
 
-    private bool _busy;
-    private bool IsDisabled => _busy || string.IsNullOrWhiteSpace(Value);
+    [Parameter] public EventCallback OnSearch { get; set; }
 
-    private async Task HandleSearch()
+    [Parameter] public bool Busy { get; set; }
+    private bool IsDisabled => Busy || string.IsNullOrWhiteSpace(Text);
+
+    private Task OnInput(ChangeEventArgs e)
     {
-        if (IsDisabled) return;
-        _busy = true;
-        try { await OnSearch.InvokeAsync(Value?.Trim()); }
-        finally { _busy = false; }
+        Text = e.Value?.ToString() ?? "";
+        return TextChanged.InvokeAsync(Text);
+    }
+
+    private Task OnClick()
+    {
+        if (IsDisabled) return Task.CompletedTask;
+        return OnSearch.InvokeAsync();
     }
 }

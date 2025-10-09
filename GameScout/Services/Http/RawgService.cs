@@ -45,6 +45,7 @@ public class RawgService : BaseHttpService, IGameCatalogService
             SortBy.Name => "name",
             SortBy.Metacritic => "-metacritic",
             SortBy.ReleaseDate => "-released",
+            SortBy.Rating => "-rating",
             _ => null
         };
 
@@ -53,7 +54,14 @@ public class RawgService : BaseHttpService, IGameCatalogService
             $"page={page}",
             $"page_size={pageSize}"
         };
-        if (!string.IsNullOrWhiteSpace(query)) qs.Add($"search={WebUtility.UrlEncode(query)}");
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            qs.Add($"search={WebUtility.UrlEncode(query)}");
+            qs.Add("search_precise=true");
+            qs.Add("exclude_additions=true");
+            qs.Add("search_exact=true");
+        }
         if (!string.IsNullOrEmpty(ordering)) qs.Add($"ordering={ordering}");
         if (!string.IsNullOrEmpty(_apiKey)) qs.Add($"key={_apiKey}");
 

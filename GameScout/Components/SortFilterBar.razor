@@ -1,16 +1,27 @@
-﻿<div class="d-flex gap-2 align-items-end mb-3">
-    <select class="form-select" @bind="Sort">
+﻿@using GameScout.Domain.Enums
+
+<div class="d-flex gap-2 align-items-end mb-3">
+    <select class="form-select" value="@Sort" @onchange="OnChanged">
         <option value="@SortBy.Name">Name</option>
         <option value="@SortBy.Metacritic">Metacritic</option>
         <option value="@SortBy.ReleaseDate">Release date</option>
         <option value="@SortBy.Price">Price</option>
+        <option value="@SortBy.Rating">Rating</option>
     </select>
     <button class="btn btn-secondary" @onclick="Apply">Apply</button>
-
 </div>
 
 @code {
-    [Parameter] public SortBy Sort { get; set; } = SortBy.Name;
+    [Parameter] public SortBy Sort { get; set; }
     [Parameter] public EventCallback<SortBy> OnApply { get; set; }
+
     private Task Apply() => OnApply.InvokeAsync(Sort);
+
+    private Task OnChanged(ChangeEventArgs e)
+    {
+        var s = e?.Value?.ToString();
+        if (Enum.TryParse<SortBy>(s, out var parsed))
+            Sort = parsed;
+        return Task.CompletedTask;
+    }
 }
