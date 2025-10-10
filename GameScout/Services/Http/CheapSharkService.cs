@@ -77,22 +77,31 @@ public class CheapSharkService : BaseHttpService, IDealsService
         return items;
     }
 
-    private List<Deal> Map(List<RawDeal> src)
+    private static List<Deal> Map(List<RawDeal> src)
     {
-        var list = new List<Deal>(src.Count);
-        foreach (var d in src)
+        static decimal P(string? s) => decimal.TryParse(s, out var v) ? v : 0m;
+
+        var bestPerStore = src
+            .Where(d => !string.IsNullOrWhiteSpace(d.DealID) && !string.IsNullOrWhiteSpace(d.StoreID))
+            .GroupBy(d => d.StoreID!)
+            .Select(g => g.OrderBy(d => P(d.SalePrice)).First())
+            .ToList();
+
+        var list = new List<Deal>(bestPerStore.Count);
+        foreach (var d in bestPerStore)
         {
-            if (string.IsNullOrWhiteSpace(d.DealID)) continue;
-            var name = (_storeNames.TryGetValue(d.StoreID ?? "", out var n) ? n : $"Store {d.StoreID}") ?? "Store";
+            var name = (_storeNames.TryGetValue(d.StoreID!, out var n) ? n : $"Store {d.StoreID}") ?? "Store";
             list.Add(new Deal
             {
                 Store = name,
-                Price = decimal.TryParse(d.SalePrice, out var sp) ? sp : 0m,
-                NormalPrice = decimal.TryParse(d.NormalPrice, out var np) ? np : 0m,
-                Savings = decimal.TryParse(d.Savings, out var sv) ? sv : 0m,
+                Price = P(d.SalePrice),
+                NormalPrice = P(d.NormalPrice),
+                Savings = P(d.Savings),
                 Url = $"https://www.cheapshark.com/redirect?dealID={d.DealID}"
             });
         }
+
+        list.Sort((a, b) => a.Price.CompareTo(b.Price));
         return list;
     }
 
