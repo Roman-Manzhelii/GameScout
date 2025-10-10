@@ -3,7 +3,7 @@
 @inject IGameCatalogService Catalog
 @using GameScout.Domain.Models
 @using GameScout.Domain.Enums
-@using Microsoft.AspNetCore.Components.Form
+@using Microsoft.AspNetCore.Components
 @inject GameScout.State.AppState State
 
 <PageTitle>GameScout</PageTitle>
@@ -65,7 +65,6 @@ else
         _loading = true;
         StateHasChanged();
 
-        // Метод повертає (IEnumerable<GameSummary> items, int total)
         var (items, total) = await Catalog.SearchAsync(
             q,
             platforms: null,

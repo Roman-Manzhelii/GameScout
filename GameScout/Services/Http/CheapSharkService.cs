@@ -16,7 +16,7 @@ public class CheapSharkService : BaseHttpService, IDealsService
     private static DateTimeOffset _storesExp = DateTimeOffset.MinValue;
 
     public CheapSharkService(HttpClient http, ILogger<CheapSharkService> log, IConfiguration cfg)
-    : base(http, log)
+        : base(http, log)
     {
         if (_http.BaseAddress is null)
         {
@@ -28,11 +28,90 @@ public class CheapSharkService : BaseHttpService, IDealsService
     }
 
 
+    public async Task<IReadOnlyList<Deal>> GetDealsByTitleAsync(string title, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(title)) return Array.Empty<Deal>();
+        await EnsureStoresAsync(ct);
+
+        var cacheKey = "game:" + title.Trim().ToUpperInvariant();
+        if (TryGet(cacheKey, out var cached)) return cached;
+
+        var searchUrl = $"games?title={WebUtility.UrlEncode(title)}&limit=5&exact=1";
+        using (var resp = await _http.GetAsync(searchUrl, ct))
+        {
+            resp.EnsureSuccessStatusCode();
+            await using var s = await resp.Content.ReadAsStreamAsync(ct);
+            var found = await JsonSerializer.DeserializeAsync<List<RawGameSearch>>(s, _json, ct) ?? new();
+            var gameId = found.FirstOrDefault()?.GameID;
+
+            if (string.IsNullOrWhiteSpace(gameId))
+            {
+                Set(cacheKey, Array.Empty<Deal>());
+                return Array.Empty<Deal>();
+            }
+
+            // Крок 2: всі пропозиції для конкретного gameID
+            var gameUrl = $"games?id={WebUtility.UrlEncode(gameId)}";
+            using var resp2 = await _http.GetAsync(gameUrl, ct);
+            resp2.EnsureSuccessStatusCode();
+            await using var s2 = await resp2.Content.ReadAsStreamAsync(ct);
+            var byId = await JsonSerializer.DeserializeAsync<RawGameById>(s2, _json, ct) ?? new();
+
+            var list = new List<Deal>();
+            if (byId.Deals is not null)
+            {
+                foreach (var d in byId.Deals)
+                {
+                    if (string.IsNullOrWhiteSpace(d.StoreID) || string.IsNullOrWhiteSpace(d.DealID))
+                        continue;
+
+                    var storeName = _storeNames.TryGetValue(d.StoreID!, out var n) ? n : $"Store {d.StoreID}";
+                    var price = D(d.Price);
+                    var normal = D(d.RetailPrice);
+                    var savings = normal > 0m ? (normal - price) / normal * 100m : 0m;
+
+                    list.Add(new Deal
+                    {
+                        Store = storeName ?? "Store",
+                        Price = price,
+                        NormalPrice = normal,
+                        Savings = savings,
+                        Url = $"https://www.cheapshark.com/redirect?dealID={d.DealID}"
+                    });
+                }
+            }
+
+            list = list
+                .OrderByDescending(x => x.Savings)
+                .ThenBy(x => x.Price)
+                .ToList();
+
+            Set(cacheKey, list);
+            return list;
+        }
+    }
+
+    public async Task<IReadOnlyList<Deal>> GetTopDealsAsync(CancellationToken ct = default)
+    {
+        await EnsureStoresAsync(ct);
+
+        var url = "deals?pageSize=120&sortBy=DealRating";
+        if (TryGet(url, out var cached)) return cached;
+
+        using var resp = await _http.GetAsync(url, ct);
+        resp.EnsureSuccessStatusCode();
+        await using var s = await resp.Content.ReadAsStreamAsync(ct);
+        var raw = await JsonSerializer.DeserializeAsync<List<RawDeal>>(s, _json, ct) ?? new();
+        var items = MapBestPerTitle(raw);
+        Set(url, items);
+        return items;
+    }
+
     private async Task EnsureStoresAsync(CancellationToken ct = default)
     {
         if (_storesExp > DateTimeOffset.UtcNow && _storeNames.Count > 0) return;
 
-        using var resp = await _http.GetAsync("stores", ct); // https://www.cheapshark.com/api/1.0/stores
+        using var resp = await _http.GetAsync("stores", ct);
         resp.EnsureSuccessStatusCode();
         await using var s = await resp.Content.ReadAsStreamAsync(ct);
         var stores = await JsonSerializer.DeserializeAsync<List<RawStore>>(s, _json, ct) ?? new();
@@ -44,66 +123,35 @@ public class CheapSharkService : BaseHttpService, IDealsService
         _storesExp = DateTimeOffset.UtcNow.AddHours(24);
     }
 
-    public async Task<IReadOnlyList<Deal>> GetDealsByTitleAsync(string title, CancellationToken ct = default)
+
+    private List<Deal> MapBestPerTitle(List<RawDeal> src)
     {
-        if (string.IsNullOrWhiteSpace(title)) return Array.Empty<Deal>();
-        await EnsureStoresAsync(ct);
+        var groups = src
+            .Where(d => !string.IsNullOrWhiteSpace(d.DealID)
+                        && !string.IsNullOrWhiteSpace(d.StoreID)
+                        && !string.IsNullOrWhiteSpace(d.Title))
+            .GroupBy(d => d.Title!, StringComparer.OrdinalIgnoreCase);
 
-        var url = $"deals?title={WebUtility.UrlEncode(title)}&pageSize=20&sortBy=DealRating";
-        if (TryGet(url, out var cached)) return cached;
-
-        using var resp = await _http.GetAsync(url, ct);
-        resp.EnsureSuccessStatusCode();
-        await using var s = await resp.Content.ReadAsStreamAsync(ct);
-        var raw = await JsonSerializer.DeserializeAsync<List<RawDeal>>(s, _json, ct) ?? new();
-        var items = Map(raw);
-        Set(url, items);
-        return items;
-    }
-
-    public async Task<IReadOnlyList<Deal>> GetTopDealsAsync(CancellationToken ct = default)
-    {
-        await EnsureStoresAsync(ct);
-
-        var url = "deals?pageSize=30&sortBy=DealRating";
-        if (TryGet(url, out var cached)) return cached;
-
-        using var resp = await _http.GetAsync(url, ct);
-        resp.EnsureSuccessStatusCode();
-        await using var s = await resp.Content.ReadAsStreamAsync(ct);
-        var raw = await JsonSerializer.DeserializeAsync<List<RawDeal>>(s, _json, ct) ?? new();
-        var items = Map(raw);
-        Set(url, items);
-        return items;
-    }
-
-    private static List<Deal> Map(List<RawDeal> src)
-    {
-        static decimal P(string? s) => decimal.TryParse(s, out var v) ? v : 0m;
-
-        var bestPerStore = src
-            .Where(d => !string.IsNullOrWhiteSpace(d.DealID) && !string.IsNullOrWhiteSpace(d.StoreID))
-            .GroupBy(d => d.StoreID!)
-            .Select(g => g.OrderBy(d => P(d.SalePrice)).First())
-            .ToList();
-
-        var list = new List<Deal>(bestPerStore.Count);
-        foreach (var d in bestPerStore)
+        var list = new List<Deal>();
+        foreach (var g in groups)
         {
-            var name = (_storeNames.TryGetValue(d.StoreID!, out var n) ? n : $"Store {d.StoreID}") ?? "Store";
+            var best = g.OrderBy(d => D(d.SalePrice)).First();
+            var storeName = _storeNames.TryGetValue(best.StoreID!, out var n) ? n : $"Store {best.StoreID}";
             list.Add(new Deal
             {
-                Store = name,
-                Price = P(d.SalePrice),
-                NormalPrice = P(d.NormalPrice),
-                Savings = P(d.Savings),
-                Url = $"https://www.cheapshark.com/redirect?dealID={d.DealID}"
+                Store = $"{best.Title} — {storeName}",
+                Price = D(best.SalePrice),
+                NormalPrice = D(best.NormalPrice),
+                Savings = D(best.Savings),
+                Url = $"https://www.cheapshark.com/redirect?dealID={best.DealID}"
             });
         }
 
         list.Sort((a, b) => a.Price.CompareTo(b.Price));
         return list;
     }
+
+    private static decimal D(string? s) => decimal.TryParse(s, out var v) ? v : 0m;
 
     private static bool TryGet(string key, out IReadOnlyList<Deal> items)
     {
@@ -139,8 +187,28 @@ public class CheapSharkService : BaseHttpService, IDealsService
     {
         public string? DealID { get; set; }
         public string? StoreID { get; set; }
+        public string? Title { get; set; }
         public string? SalePrice { get; set; }
         public string? NormalPrice { get; set; }
         public string? Savings { get; set; }
+    }
+
+    private sealed class RawGameSearch
+    {
+        [JsonPropertyName("gameID")] public string? GameID { get; set; }
+        [JsonPropertyName("external")] public string? External { get; set; }
+    }
+
+    private sealed class RawGameById
+    {
+        [JsonPropertyName("deals")] public List<RawGameDeal>? Deals { get; set; }
+    }
+
+    private sealed class RawGameDeal
+    {
+        [JsonPropertyName("dealID")] public string? DealID { get; set; }
+        [JsonPropertyName("storeID")] public string? StoreID { get; set; }
+        [JsonPropertyName("price")] public string? Price { get; set; }
+        [JsonPropertyName("retailPrice")] public string? RetailPrice { get; set; }
     }
 }

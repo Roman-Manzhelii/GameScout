@@ -1,36 +1,51 @@
-﻿@using DealModel = GameScout.Domain.Models.Deal
-@page "/deals"
+﻿@page "/deals"
 @rendermode InteractiveServer
-@inject IDealsService DealsService
+@using DealModel = GameScout.Domain.Models.Deal
+@inject GameScout.Services.Abstractions.IDealsService Deals
 
+<PageTitle>Hot Deals</PageTitle>
 
-<h3>Deals</h3>
-@if (_loading)
+<h3>Hot Deals</h3>
+
+@if (_loading && _deals.Count == 0)
 {
     <p>Loading...</p>
 }
 else if (_deals.Count == 0)
 {
-
     <p>No deals</p>
 }
 else
 {
-    foreach (var d in _deals)
+    <p class="text-muted">Found @_deals.Count result(s).</p>
+    @foreach (var d in _deals)
     {
         <DealCard Deal="d" />
     }
 }
 
 @code {
-    private readonly List<DealModel> _deals = new();
+    private List<DealModel> _deals = new();
     private bool _loading;
+    
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender) return;
+
         _loading = true;
-        _deals.Clear();
+        StateHasChanged();
+
+        var top = await Deals.GetTopDealsAsync();
+
+        _deals = top
+            .Where(d => d.Savings >= 40m)
+            .OrderByDescending(d => d.Savings)
+            .ThenBy(d => d.Price)
+            .Take(30)
+            .ToList();
+
         _loading = false;
-        return Task.CompletedTask;
+        StateHasChanged();
     }
 }
