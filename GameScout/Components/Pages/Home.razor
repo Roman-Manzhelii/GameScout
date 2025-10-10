@@ -11,7 +11,7 @@
 <h3>Search games</h3>
 <SearchBar @bind-Text="_query" OnSearch="OnSearchClicked" Busy="_loading" />
 
-<div class="mt-2">
+@* <div class="mt-2">
     <label class="form-label">Sort</label>
     <InputSelect class="form-select" @bind-Value="_sort" TValue="SortBy">
         <option value="@SortBy.Metacritic">Metacritic</option>
@@ -19,7 +19,7 @@
         <option value="@SortBy.ReleaseDate">Released</option>
         <option value="@SortBy.Name">Name</option>
     </InputSelect>
-</div>
+</div> *@
 
 @if (_loading)
 {
