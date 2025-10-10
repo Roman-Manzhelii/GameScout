@@ -1,25 +1,39 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject IGameCatalogService Catalog
+@using GameScout.Domain.Models
+@using GameScout.Domain.Enums
+@using Microsoft.AspNetCore.Components.Form
+@inject GameScout.State.AppState State
 
 <PageTitle>GameScout</PageTitle>
 
 <h3>Search games</h3>
 <SearchBar @bind-Text="_query" OnSearch="OnSearchClicked" Busy="_loading" />
-<SortFilterBar Sort="@_sort" OnApply="SetSort" />
+
+<div class="mt-2">
+    <label class="form-label">Sort</label>
+    <InputSelect class="form-select" @bind-Value="_sort" TValue="SortBy">
+        <option value="@SortBy.Metacritic">Metacritic</option>
+        <option value="@SortBy.Rating">Rating</option>
+        <option value="@SortBy.ReleaseDate">Released</option>
+        <option value="@SortBy.Name">Name</option>
+    </InputSelect>
+</div>
 
 @if (_loading)
 {
     <p>Loading...</p>
 }
-else if (_items.Count == 0)
+else if (!State.HasSearch)
 {
-    <p>Nothing found</p>
+    <p>No results.</p>
 }
 else
 {
-    <p>Found @_total result(s).</p>
-    @foreach (var g in _items)
+    <p>Found @State.SearchTotal result(s).</p>
+
+    @foreach (var g in State.SearchItems)
     {
         <GameCard Game="g" />
     }
@@ -27,38 +41,40 @@ else
 
 @code {
     private string _query = "";
-
-    private Task OnSearchClicked() => Search(_query);
-
-    private readonly List<GameSummary> _items = new();
-    private bool _loading;
     private SortBy _sort = SortBy.Metacritic;
-    private int _page = 1, _pageSize = 20, _total;
-    private string? _lastQuery;
+    private int _page = 1;
+    private int _pageSize = 20;
+    private bool _loading;
 
-    private async Task SetSort(SortBy s)
+    protected override void OnInitialized()
     {
-        if (_sort == s) return;
-        _sort = s;
-        if (!string.IsNullOrWhiteSpace(_lastQuery))
-            await Search(_lastQuery);
+        if (State.HasSearch)
+        {
+            _query = State.SearchQuery ?? _query;
+            _sort = State.SearchSort;
+            _page = State.SearchPage;
+            _pageSize = State.SearchPageSize;
+        }
     }
 
-    private async Task Search(string q)
+    private async Task OnSearchClicked()
     {
-        _lastQuery = q;
-        if (string.IsNullOrWhiteSpace(q)) return;
+        var q = _query?.Trim();
+        if (string.IsNullOrEmpty(q)) return;
 
         _loading = true;
         StateHasChanged();
 
+        // Метод повертає (IEnumerable<GameSummary> items, int total)
         var (items, total) = await Catalog.SearchAsync(
-            q, platforms: null, genres: null,
-            page: _page, pageSize: _pageSize, sort: _sort);
+            q,
+            platforms: null,
+            genres: null,
+            page: _page,
+            pageSize: _pageSize,
+            sort: _sort);
 
-        _items.Clear();
-        _items.AddRange(items);
-        _total = total;
+        State.SetSearchResults(q, items, total, _sort, _page, _pageSize);
 
         _loading = false;
     }

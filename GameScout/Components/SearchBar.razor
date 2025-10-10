@@ -1,33 +1,31 @@
-﻿<input class="form-control"
-       placeholder="Search games..."
-       value="@Text"
-       @oninput="OnInput" />
-
-<button class="btn btn-primary mt-2"
-        @onclick="OnClick"
-        disabled="@IsDisabled">
-    Search
-</button>
+﻿<div class="input-group mb-2">
+    <input class="form-control"
+           placeholder="Type game title"
+           value="@Text"
+           @onchange="OnInput"
+           @onkeydown="@(e => { if (e.Key == "Enter") _ = Submit(); })" />
+    <button class="btn btn-primary"
+            disabled="@Busy"
+            @onclick="Submit">
+        Search
+    </button>
+</div>
 
 @code {
-    // 2-way bindable parameter
-    [Parameter] public string Text { get; set; } = "";
-    [Parameter] public EventCallback<string> TextChanged { get; set; }
-
+    [Parameter] public string? Text { get; set; }
+    [Parameter] public EventCallback<string?> TextChanged { get; set; }
     [Parameter] public EventCallback OnSearch { get; set; }
-
     [Parameter] public bool Busy { get; set; }
-    private bool IsDisabled => Busy || string.IsNullOrWhiteSpace(Text);
 
-    private Task OnInput(ChangeEventArgs e)
+    private async Task OnInput(ChangeEventArgs e)
     {
-        Text = e.Value?.ToString() ?? "";
-        return TextChanged.InvokeAsync(Text);
+        Text = e.Value?.ToString();
+        await TextChanged.InvokeAsync(Text);
     }
 
-    private Task OnClick()
+    private async Task Submit()
     {
-        if (IsDisabled) return Task.CompletedTask;
-        return OnSearch.InvokeAsync();
+        if (Busy) return;
+        await OnSearch.InvokeAsync();
     }
 }
