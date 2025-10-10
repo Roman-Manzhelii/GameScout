@@ -7,4 +7,5 @@ public class SavedItem
     public string Name { get; set; } = "";
     public BacklogStatus Status { get; set; } = BacklogStatus.Backlog;
     public string? Notes { get; set; }
+    public string? Image { get; set; }
 }

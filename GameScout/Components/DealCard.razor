@@ -15,16 +15,16 @@
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
                 <div class="fw-bold">@Deal?.Store</div>
                 <div class="text-end">
-                    <div class="fs-5">$@Deal.Price.ToString("F2")</div>
+                    <div class="fs-5">$@Deal!.Price.ToString("F2")</div>
 
-                    @if (Deal.NormalPrice > 0 && Deal.NormalPrice != Deal.Price)
+                    @if (Deal.NormalPrice > 0 && Deal!.NormalPrice != Deal.Price)
                     {
                         <div class="text-muted text-decoration-line-through small">
                             $@Deal.NormalPrice.ToString("F2")
                         </div>
                         @if (Deal.Savings > 0)
                         {
-                            <span class="badge bg-success">-@Math.Round(Deal.Savings)%</span>
+                            <span class="badge bg-success">-@Math.Round(Deal!.Savings)%</span>
                         }
                     }
                 </div>

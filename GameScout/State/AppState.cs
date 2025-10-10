@@ -12,7 +12,7 @@ public sealed class AppState
     private const string BacklogKey = "gamescout.backlog.v1";
     public List<SavedItem> Backlog { get; } = new();
 
-    public AppState(ILocalStorage ls) => _ls = ls;
+    public AppState(ILocalStorage ls) => _ls = ls ?? throw new ArgumentNullException(nameof(ls));
 
     public async Task EnsureLoadedAsync()
     {
@@ -29,7 +29,16 @@ public sealed class AppState
         await EnsureLoadedAsync();
         var i = Backlog.FindIndex(x => x.GameId == g.Id);
         if (i >= 0) Backlog.RemoveAt(i);
-        else Backlog.Add(new SavedItem { GameId = g.Id, Name = g.Name ?? "" });
+        else Backlog.Add(new SavedItem { GameId = g.Id, Name = g.Name ?? "", Image = g.Image });
+        await SaveAsync();
+    }
+
+    public async Task ToggleAsync(int id, string name, string? image)
+    {
+        await EnsureLoadedAsync();
+        var i = Backlog.FindIndex(x => x.GameId == id);
+        if (i >= 0) Backlog.RemoveAt(i);
+        else Backlog.Add(new SavedItem { GameId = id, Name = name ?? "", Image = image });
         await SaveAsync();
     }
 
