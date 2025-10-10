@@ -1,16 +1,38 @@
-﻿<div class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">@Game?.Name</h5>
-        <p class="card-text">
-            @if (Game?.Metacritic is int m)
-            {
-                <span>MC: @m</span>
-            }
-        </p>
-        <a class="btn btn-outline-secondary" href="@($"/GameDetails/{Game?.Id}")">Details</a>
+﻿@using GameScout.Domain.Models
+@inject GameScout.State.AppState State
+
+@if (Game is not null)
+{
+    <div class="card mb-2">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <a class="fw-semibold text-decoration-none" href="/GameDetails/@Game.Id">
+                @Game.Name
+            </a>
+
+            <button class="btn btn-sm @(inBacklog ? "btn-danger" : "btn-outline-primary")"
+                    @onclick="Toggle">
+                @(inBacklog ? "Remove" : "Add")
+            </button>
+        </div>
     </div>
-</div>
+}
 
 @code {
     [Parameter] public GameSummary? Game { get; set; }
+    private bool inBacklog;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || Game is null) return;
+        inBacklog = await State.ContainsAsync(Game.Id);
+        StateHasChanged();
+    }
+
+    private async Task Toggle()
+    {
+        if (Game is null) return;
+        await State.ToggleAsync(Game);
+        inBacklog = await State.ContainsAsync(Game.Id);
+        StateHasChanged();
+    }
 }

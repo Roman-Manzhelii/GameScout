@@ -1,5 +1,6 @@
 ﻿using DotNetEnv;
 using GameScout.Components;
+using GameScout.Services;
 using GameScout.Services.Abstractions;
 using GameScout.Services.Http;
 using GameScout.State;
@@ -26,6 +27,7 @@ builder.Services.AddHttpClient<CheapSharkService>(c =>
 builder.Services.AddScoped<IGameCatalogService, RawgService>();
 builder.Services.AddScoped<IDealsService, CheapSharkService>();
 builder.Services.AddScoped<AppState>();
+builder.Services.AddScoped<ILocalStorage, LocalStorage>();
 
 var app = builder.Build();
 
