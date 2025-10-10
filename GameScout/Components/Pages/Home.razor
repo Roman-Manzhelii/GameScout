@@ -37,6 +37,11 @@ else
     {
         <GameCard Game="g" />
     }
+
+    @if (State.SearchTotal > _pageSize)
+    {
+        <Pager Page="@_page" PageSize="@_pageSize" Total="@State.SearchTotal" OnChange="GoToPage" />
+    }
 }
 
 @code {
@@ -61,19 +66,27 @@ else
     {
         var q = _query?.Trim();
         if (string.IsNullOrEmpty(q)) return;
+        _page = 1;
+        await LoadPage(_page, q, _sort);
+    }
 
+    private Task GoToPage(int page) => LoadPage(page, _query, _sort);
+
+    private async Task LoadPage(int page, string query, SortBy sort)
+    {
         _loading = true;
         StateHasChanged();
 
         var (items, total) = await Catalog.SearchAsync(
-            q,
+            query,
             platforms: null,
             genres: null,
-            page: _page,
+            page: page,
             pageSize: _pageSize,
-            sort: _sort);
+            sort: sort);
 
-        State.SetSearchResults(q, items, total, _sort, _page, _pageSize);
+        _page = page;
+        State.SetSearchResults(query, items, total, sort, _page, _pageSize);
 
         _loading = false;
     }

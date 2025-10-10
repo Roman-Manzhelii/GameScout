@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Components
+
+<nav aria-label="pagination" class="mt-3">
+    <ul class="pagination mb-0">
+        <li class="page-item @(Page <= 1 ? "disabled" : null)">
+            <button class="page-link" @onclick="() => Go(Page - 1)">Prev</button>
+        </li>
+
+        @foreach (var p in Pages())
+        {
+            <li class="page-item @(p == Page ? "active" : null)">
+                <button class="page-link" @onclick="() => Go(p)">@p</button>
+            </li>
+        }
+
+        <li class="page-item @(Page >= TotalPages ? "disabled" : null)">
+            <button class="page-link" @onclick="() => Go(Page + 1)">Next</button>
+        </li>
+    </ul>
+</nav>
+
+@code {
+    [Parameter] public int Page { get; set; } = 1;
+    [Parameter] public int PageSize { get; set; } = 20;
+    [Parameter] public int Total { get; set; } = 0;
+    [Parameter] public EventCallback<int> OnChange { get; set; }
+
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling((double)Total / PageSize));
+
+    private async Task Go(int p)
+    {
+        p = Math.Clamp(p, 1, TotalPages);
+        if (p == Page) return;
+        await OnChange.InvokeAsync(p);
+    }
+
+    private IEnumerable<int> Pages()
+    {
+        const int window = 2;
+        var start = Math.Max(1, Page - window);
+        var end = Math.Min(TotalPages, Page + window);
+        for (int i = start; i <= end; i++) yield return i;
+    }
+}
