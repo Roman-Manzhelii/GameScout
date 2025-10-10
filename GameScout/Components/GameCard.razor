@@ -4,15 +4,24 @@
 @if (Game is not null)
 {
     <div class="card mb-2">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <a class="fw-semibold text-decoration-none" href="/GameDetails/@Game.Id">
-                @Game.Name
-            </a>
+        <div class="card-body d-flex align-items-center">
+            <img src="@Game.Image"
+                 alt="@Game.Name"
+                 class="rounded me-3"
+                 style="width:64px;height:64px;object-fit:cover"
+                 loading="lazy"
+                 hidden="@string.IsNullOrEmpty(Game.Image)" />
 
-            <button class="btn btn-sm @(inBacklog ? "btn-danger" : "btn-outline-primary")"
-                    @onclick="Toggle">
-                @(inBacklog ? "Remove" : "Add")
-            </button>
+            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+                <a class="fw-semibold text-decoration-none" href="/GameDetails/@Game.Id">
+                    @Game.Name
+                </a>
+
+                <button class="btn btn-sm @(inBacklog ? "btn-danger" : "btn-outline-primary")"
+                        @onclick="Toggle">
+                    @(inBacklog ? "Remove" : "Add")
+                </button>
+            </div>
         </div>
     </div>
 }

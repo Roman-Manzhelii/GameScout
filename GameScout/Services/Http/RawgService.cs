@@ -3,6 +3,7 @@ using System.Text.Json;
 using GameScout.Domain.Enums;
 using GameScout.Domain.Models;
 using GameScout.Services.Abstractions;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace GameScout.Services.Http;
@@ -102,7 +103,8 @@ public class RawgService : BaseHttpService, IGameCatalogService
                     Metacritic = g.Metacritic,
                     Released = released,
                     Platforms = platformsList,
-                    Genres = genresList
+                    Genres = genresList,
+                    Image = g.BackgroundImage
                 });
             }
         }
@@ -199,6 +201,7 @@ public class RawgService : BaseHttpService, IGameCatalogService
         public int? Metacritic { get; set; }
         public List<PlatformWrapper>? Platforms { get; set; }
         public List<NameWrapper>? Genres { get; set; }
+        [JsonPropertyName("background_image")] public string? BackgroundImage { get; set; }
     }
     private sealed class PlatformWrapper { public PlatformObj? Platform { get; set; } }
     private sealed class PlatformObj { public string? Name { get; set; } }

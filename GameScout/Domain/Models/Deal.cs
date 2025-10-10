@@ -6,4 +6,5 @@ public class Deal
     public decimal NormalPrice { get; set; }
     public decimal Savings { get; set; }
     public string Url { get; set; } = "";
+    public string? Image { get; set; }
 }

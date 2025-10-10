@@ -7,4 +7,5 @@ public class GameSummary
     public DateOnly? Released { get; set; }
     public List<string> Platforms { get; set; } = new();
     public List<string> Genres { get; set; } = new();
+    public string? Image { get; set; }
 }
