@@ -1,15 +1,30 @@
-﻿<div class="card mb-2">
-    <div class="card-body">
-        <div class="d-flex justify-content-between">
-            <strong>@Deal?.Store</strong>
-            <span>@Deal?.Price.ToString("0.00")</span>
+﻿@using GameScout.Domain.Models
+
+<div class="card mb-3">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div>
+            <div class="fw-bold">@Deal?.Store</div>
+            <a href="@Deal?.Url" target="_blank" rel="noopener">Open</a>
         </div>
-        <a href="@Deal?.Url" target="_blank" rel="noopener">Open</a>
+
+        @if (Deal is not null)
+        {
+            <div class="text-end">
+                <div class="fs-5">$@Deal.Price.ToString("F2")</div>
+
+                @if (Deal.NormalPrice > 0 && Deal.NormalPrice != Deal.Price)
+                {
+                    <div class="text-muted text-decoration-line-through small">
+                        $@Deal.NormalPrice.ToString("F2")
+                    </div>
+                    @if (Deal.Savings > 0)
+                    {
+                        <span class="badge bg-success">-@Math.Round(Deal.Savings)%</span>
+                    }
+                }
+            </div>
+        }
     </div>
 </div>
 
-@using DealModel = GameScout.Domain.Models.Deal
-
-@code {
-    [Parameter] public DealModel? Deal { get; set; }
-}
+@code { [Parameter] public Deal? Deal { get; set; } }

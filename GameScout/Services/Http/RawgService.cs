@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using GameScout.Domain.Enums;
 using GameScout.Domain.Models;
 using GameScout.Services.Abstractions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 namespace GameScout.Services.Http;

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using GameScout.Domain.Enums;
+﻿using GameScout.Domain.Enums;
 using GameScout.Domain.Models;
 
 namespace GameScout.Services.Abstractions;

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GameScout.Domain.Models;
+﻿namespace GameScout.Domain.Models;
 public class GameSummary
 {
     public int Id { get; set; }

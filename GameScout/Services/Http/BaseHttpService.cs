@@ -1,7 +1,4 @@
-﻿using System.Net.Http;
-using Microsoft.Extensions.Logging;
-
-namespace GameScout.Services.Http;
+﻿namespace GameScout.Services.Http;
 public abstract class BaseHttpService
 {
     protected readonly HttpClient _http;
