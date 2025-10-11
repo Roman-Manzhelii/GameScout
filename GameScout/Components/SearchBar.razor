@@ -1,15 +1,14 @@
-﻿<div class="input-group mb-2">
-    <input class="form-control"
-           placeholder="Type game title"
-           value="@Text"
-           @onchange="OnInput"
-           @onkeydown="@(e => { if (e.Key == "Enter") _ = Submit(); })" />
-    <button class="btn btn-primary"
-            disabled="@Busy"
-            @onclick="Submit">
-        Search
-    </button>
-</div>
+﻿<form class="search-form" onsubmit="return false">
+    <div class="field">
+        <input id="q"
+               class="input control-lg"
+               placeholder="Type game title"
+               value="@Text"
+               @onchange="OnInput"
+               @onkeydown="@(e => { if (e.Key == "Enter") _ = Submit(); })" />
+    </div>
+    <button class="btn btn-primary control-lg" disabled="@Busy" @onclick="Submit">Search</button>
+</form>
 
 @code {
     [Parameter] public string? Text { get; set; }

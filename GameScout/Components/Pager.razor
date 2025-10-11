@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components
 
-<nav aria-label="pagination" class="mt-3">
-    <ul class="pagination mb-0">
+<nav aria-label="pagination">
+    <ul class="pagination">
         <li class="page-item @(Page <= 1 ? "disabled" : null)">
             <button class="page-link" @onclick="() => Go(Page - 1)">Prev</button>
         </li>

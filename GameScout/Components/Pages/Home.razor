@@ -8,35 +8,28 @@
 
 <PageTitle>GameScout</PageTitle>
 
-<h3>Search games</h3>
+<h3 class="page-heading">Search games</h3>
 <SearchBar @bind-Text="_query" OnSearch="OnSearchClicked" Busy="_loading" />
 
-@* <div class="mt-2">
-    <label class="form-label">Sort</label>
-    <InputSelect class="form-select" @bind-Value="_sort" TValue="SortBy">
-        <option value="@SortBy.Metacritic">Metacritic</option>
-        <option value="@SortBy.Rating">Rating</option>
-        <option value="@SortBy.ReleaseDate">Released</option>
-        <option value="@SortBy.Name">Name</option>
-    </InputSelect>
-</div> *@
 
 @if (_loading)
 {
     <p>Loading...</p>
 }
-else if (!State.HasSearch)
+else if (!State.HasSearch || State.SearchItems is null || State.SearchItems.Count == 0)
 {
-    <p>No results.</p>
+    <div class="empty">No results.</div>
 }
 else
 {
     <p>Found @State.SearchTotal result(s).</p>
 
-    @foreach (var g in State.SearchItems)
-    {
+    <div class="grid">
+        @foreach (var g in State.SearchItems)
+        {
         <GameCard Game="g" />
-    }
+        }
+    </div>
 
     @if (State.SearchTotal > _pageSize)
     {

@@ -1,19 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<div id="app-shell">
+    <NavMenu />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
+    <div id="app-content">
+        <main class="content">
             @Body
-        </article>
-    </main>
+            <footer class="app-footer">GameScout • © @DateTime.Now.Year</footer>
+        </main>
+    </div>
 </div>
 
 <div id="blazor-error-ui">
