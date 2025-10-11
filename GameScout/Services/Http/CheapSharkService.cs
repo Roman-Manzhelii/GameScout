@@ -142,7 +142,7 @@ public class CheapSharkService : BaseHttpService, IDealsService
             var storeName = _storeNames.TryGetValue(best.StoreID!, out var n) ? n : $"Store {best.StoreID}";
             list.Add(new Deal
             {
-                Store = $"{best.Title} — {storeName}",
+                Store = $"{best.Title} | {storeName}",
                 Price = P(best.SalePrice),
                 NormalPrice = P(best.NormalPrice),
                 Savings = P(best.Savings),

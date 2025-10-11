@@ -2,38 +2,58 @@
 
 @if (Deal is not null)
 {
-    <article class="card game-card deal-card">
+    <article class="card deal-card">
         <img class="cover"
-             src="@(!string.IsNullOrWhiteSpace(Deal?.Image) ? Deal.Image : "/img/placeholder-cover.png")"
+             src="@(!string.IsNullOrWhiteSpace(Deal.Image) ? Deal.Image : "/img/placeholder-cover.png")"
              onerror="this.onerror=null;this.src='/img/placeholder-cover.png';"
-             alt="@Deal.Store"
-             loading="lazy"
-             />
+             alt="@(!string.IsNullOrEmpty(_gameTitle) ? _gameTitle : _storeName)"
+             loading="lazy" />
 
-        <div class="card-body">
-            <div class="store">@Deal?.Store</div>
+        <div class="deal-footer">
+            <div class="deal-info">
+                @if (!string.IsNullOrEmpty(_gameTitle))
+                {
+                    <h4 class="title clamp-2">@_gameTitle</h4>
+                }
+                <div class="store clamp-1">@_storeName</div>
+            </div>
 
-            <div class="actions">
-                <div class="price">
-                    <span class="new">$@Deal!.Price.ToString("F2")</span>
-                    @if (Deal.NormalPrice > 0 && Deal!.NormalPrice != Deal.Price)
-                    {
-                        <span class="old">$@Deal.NormalPrice.ToString("F2")</span>
-                        @if (Deal.Savings > 0)
-                        {
-                            <span class="badge bg-success">-@Math.Round(Deal!.Savings)%</span>
-                        }
-                    }
-                </div>
-
-                <a class="btn btn-primary" href="@Deal.Url" target="_blank" rel="noopener">
-                    Get deal
-                </a>
+            <div class="deal-price">
+                @if (Deal.Savings > 0)
+                {
+                    <span class="discount">-@Math.Round(Deal.Savings)%</span>
+                }
+                @if (Deal.NormalPrice > 0 && Deal.NormalPrice != Deal.Price)
+                {
+                    <span class="old">$@Deal.NormalPrice.ToString("F2")</span>
+                }
+                <span class="new">$@Deal.Price.ToString("F2")</span>
             </div>
         </div>
+
+        <a class="stretched-link" href="@Deal.Url" target="_blank" rel="noopener" aria-label="Open deal"></a>
     </article>
 }
 
 @code {
     [Parameter] public Deal? Deal { get; set; }
+
+    private string _gameTitle = string.Empty;
+    private string _storeName = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        var src = Deal?.Store ?? string.Empty;
+        var p = src.LastIndexOf('|');
+        if (p >= 0)
+        {
+            _gameTitle = src[..p].Trim().TrimEnd('-', '—');
+            _storeName = src[(p + 1)..].Trim();
+        }
+        else
+        {
+            _gameTitle = string.Empty;
+            _storeName = src.Trim();
+        }
+    }
 }
