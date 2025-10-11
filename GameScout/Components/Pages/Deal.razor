@@ -9,15 +9,15 @@
 
 @if (_loading && _pageItems.Count == 0)
 {
-    <p>Loading...</p>
+    <div class="empty">Loading...</div>
 }
 else if (_all.Count == 0)
 {
-    <div class="empty deals-grid">No deals.</div>
+    <div class="empty">No deals.</div>
 }
 else
 {
-    <div class="grid deals-grid">
+    <div class="cards-masonry">
         @foreach (var d in _pageItems)
         {
             <DealCard Deal="d" />

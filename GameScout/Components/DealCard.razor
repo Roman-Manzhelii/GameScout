@@ -7,7 +7,7 @@
              src="@(!string.IsNullOrWhiteSpace(Deal.Image) ? Deal.Image : "/img/placeholder-cover.png")"
              onerror="this.onerror=null;this.src='/img/placeholder-cover.png';"
              alt="@(!string.IsNullOrEmpty(_gameTitle) ? _gameTitle : _storeName)"
-             loading="lazy" />
+             />
 
         <div class="deal-footer">
             <div class="deal-info">
