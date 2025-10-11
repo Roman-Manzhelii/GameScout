@@ -16,7 +16,10 @@
 {
     <p>Loading...</p>
 }
-else if (!State.HasSearch || State.SearchItems is null || State.SearchItems.Count == 0)
+else if (State.SearchQuery is null)
+{
+}
+else if (State.SearchItems is null || State.SearchItems.Count == 0)
 {
     <div class="empty">No results.</div>
 }
