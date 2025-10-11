@@ -3,40 +3,46 @@
 @using GameScout.Domain.Models
 @inject GameScout.State.AppState State
 @inject GameScout.Services.Abstractions.IGameCatalogService Catalog
+@inject IJSRuntime JS
 
 <PageTitle>Backlog</PageTitle>
 
-<h3>Backlog</h3>
+<section class="stack">
+    <h2 class="page-heading">Backlog</h2>
 
-@if (_loading)
-{
-    <p>Loading...</p>
-}
-else if (State.Backlog.Count == 0)
-{
-    <p>Empty.</p>
-}
-else
-{
-    @foreach (var item in State.Backlog)
+    @if (_loading)
     {
-        <div class="card">
-            <div class="card-body">
-                <img src="@item.Image"
-                     alt="@item.Name"
-                     loading="lazy"
-                     hidden="@string.IsNullOrEmpty(item.Image)" />
+        <div class="empty">Loading…</div>
+    }
+    else if (State.Backlog.Count == 0)
+    {
+        <div class="empty">Your backlog is empty.</div>
+    }
+    else
+    {
+        <div class="cards-masonry">
+            @foreach (var item in State.Backlog)
+            {
+                <article class="card game-card">
+                    <img class="cover"
+                         src="@(!string.IsNullOrWhiteSpace(item.Image) ? item.Image : "/no-image.jpeg")"
+                         onerror="this.onerror=null;this.src='/no-image.jpeg';"
+                         alt="@item.Name"
+                         />
 
-                <div>
-                    <a href="/GameDetails/@item.GameId">
-                        @item.Name
-                    </a>
-                    <button @onclick="() => Remove(item)">Remove</button>
-                </div>
-            </div>
+                    <div class="card-body">
+                        <div class="title clamp-2">@item.Name</div>
+
+                        <div class="actions">
+                            <a class="btn" href="/GameDetails/@item.GameId">Details</a>
+                            <button class="btn btn-remove" @onclick="() => Remove(item)">Remove</button>
+                        </div>
+                    </div>
+                </article>
+            }
         </div>
     }
-}
+</section>
 
 @code {
     private bool _loading;
@@ -69,6 +75,9 @@ else
 
     private async Task Remove(SavedItem it)
     {
+        var ok = await JS.InvokeAsync<bool>("confirm", $"Remove «{it.Name}» from Backlog?");
+        if (!ok) return;
+
         await State.ToggleAsync(it.GameId, it.Name, it.Image);
         StateHasChanged();
     }
