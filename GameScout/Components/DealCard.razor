@@ -2,34 +2,36 @@
 
 @if (Deal is not null)
 {
-    <div class="card">
-        <div>
-            <img src="@Deal.Image"
-                 alt="@Deal.Store"
-                 loading="lazy"
-                 />
+    <article class="card game-card deal-card">
+        <img class="cover"
+             src="@(!string.IsNullOrWhiteSpace(Deal?.Image) ? Deal.Image : "/img/placeholder-cover.png")"
+             onerror="this.onerror=null;this.src='/img/placeholder-cover.png';"
+             alt="@Deal.Store"
+             loading="lazy"
+             />
 
+        <div class="card-body">
+            <div class="store">@Deal?.Store</div>
 
-            <div>
-                <div>@Deal?.Store</div>
-                <div>
-                    <div>$@Deal!.Price.ToString("F2")</div>
-
+            <div class="actions">
+                <div class="price">
+                    <span class="new">$@Deal!.Price.ToString("F2")</span>
                     @if (Deal.NormalPrice > 0 && Deal!.NormalPrice != Deal.Price)
                     {
-                        <div>
-                            $@Deal.NormalPrice.ToString("F2")
-                        </div>
+                        <span class="old">$@Deal.NormalPrice.ToString("F2")</span>
                         @if (Deal.Savings > 0)
                         {
                             <span class="badge bg-success">-@Math.Round(Deal!.Savings)%</span>
                         }
                     }
                 </div>
-                <a href="@Deal.Url" target="_blank" rel="noopener">Open</a>
+
+                <a class="btn btn-primary" href="@Deal.Url" target="_blank" rel="noopener">
+                    Get deal
+                </a>
             </div>
         </div>
-    </div>
+    </article>
 }
 
 @code {

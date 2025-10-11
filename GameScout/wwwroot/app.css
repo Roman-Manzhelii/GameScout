@@ -525,3 +525,53 @@ a {
         display: none
     }
 }
+
+.deals-grid {
+    margin-top: var(--section-gap)
+}
+
+.deal-card .title {
+    font-weight: 700;
+    margin: 8px 0 2px
+}
+
+.deal-card .store {
+    font-size: 13px;
+    color: var(--text-dim)
+}
+
+.deal-card .actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.deal-card .btn {
+    min-width: 96px
+}
+
+.deal-card a.btn {
+    background: transparent;
+    border-color: var(--glass-160)
+}
+
+    .deal-card a.btn:hover {
+        background: var(--btn-bg-hover)
+    }
+
+.price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-weight: 700
+}
+
+    .price .old {
+        color: var(--text-dim);
+        text-decoration: line-through
+    }
+
+    .price .new {
+        color: #fff
+    }
