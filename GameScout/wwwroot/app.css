@@ -38,7 +38,7 @@
     --sidebar-w: 260px;
     --footer-h: 56px;
     --control-h: 40px;
-    --section-gap: 20px
+    --section-gap: 20px;
 }
 
 * {
@@ -53,7 +53,7 @@ body {
     margin: 0;
     font: 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Arial,sans-serif;
     color: var(--text);
-    background: var(--bg-900)
+    background: var(--bg-900);
 }
 
 img {
@@ -79,7 +79,7 @@ a {
     min-height: 100vh;
     display: grid;
     grid-template-columns: var(--sidebar-w) 1fr;
-    grid-template-areas: "sidebar main"
+    grid-template-areas: "sidebar main";
 }
 
 #sidebar {
@@ -91,7 +91,7 @@ a {
     background: var(--maroon);
     border-right: 1px solid var(--glass-100);
     padding: 18px 14px;
-    color: #fff
+    color: #fff;
 }
 
 .brand {
@@ -103,7 +103,7 @@ a {
     letter-spacing: .4px;
     text-transform: uppercase;
     color: #fff;
-    text-decoration: none
+    text-decoration: none;
 }
 
     .brand::before {
@@ -112,7 +112,7 @@ a {
         height: 12px;
         border-radius: 50%;
         background: var(--teal-600);
-        border: 2px solid var(--glass-160)
+        border: 2px solid var(--glass-160);
     }
 
 .nav {
@@ -176,17 +176,28 @@ a {
     }
 
 .clamp-1 {
-    display: -webkit-box;
     -webkit-line-clamp: 1;
+    display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden
 }
 
 .clamp-2 {
-    display: -webkit-box;
     -webkit-line-clamp: 2;
+    display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden
+}
+
+.text-dim {
+    color: var(--text-dim)
+}
+
+.stretched-link {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    z-index: 1
 }
 
 .card {
@@ -195,7 +206,7 @@ a {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     overflow: hidden;
-    transition: transform .18s ease,box-shadow .18s ease
+    transition: transform .18s ease,box-shadow .18s ease;
 }
 
     .card:hover {
@@ -229,7 +240,7 @@ a {
     background: var(--btn-bg);
     color: var(--text);
     cursor: pointer;
-    white-space: nowrap
+    white-space: nowrap;
 }
 
     .btn:hover {
@@ -288,7 +299,7 @@ a {
     border-radius: 12px;
     border: 1px solid var(--glass-180);
     background: var(--input-bg);
-    color: var(--text)
+    color: var(--text);
 }
 
     .input:focus {
@@ -347,7 +358,7 @@ a {
 
 .cards-masonry {
     column-width: 360px;
-    column-gap: var(--gap);
+    column-gap: var(--gap)
 }
 
 @media (max-width:1100px) {
@@ -368,7 +379,7 @@ a {
     margin: 0 0 var(--gap);
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
-    -moz-column-break-inside: avoid;
+    -moz-column-break-inside: avoid
 }
 
     .cards-masonry > * > .card,
@@ -376,7 +387,7 @@ a {
     .cards-masonry > * > .deal-card {
         display: block;
         width: 100%;
-        break-inside: avoid;
+        break-inside: avoid
     }
 
 .game-card {
@@ -396,7 +407,7 @@ a {
         border-top-left-radius: var(--radius);
         border-top-right-radius: var(--radius);
         border-bottom: 1px solid var(--glass-100);
-        filter: contrast(1.05) saturate(1.08)
+        filter: contrast(1.05) saturate(1.08);
     }
 
     .game-card .card-body {
@@ -407,7 +418,7 @@ a {
         background: var(--bg-800);
         border-top: 1px solid var(--glass-100);
         border-bottom-left-radius: var(--radius);
-        border-bottom-right-radius: var(--radius)
+        border-bottom-right-radius: var(--radius);
     }
 
     .game-card .title {
@@ -420,7 +431,7 @@ a {
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        min-height: calc(2 * 1.25em)
+        min-height: calc(2 * 1.25em);
     }
 
     .game-card .actions {
@@ -490,7 +501,7 @@ a {
         display: block;
         border-top-left-radius: var(--radius);
         border-top-right-radius: var(--radius);
-        border-bottom: 1px solid var(--glass-100)
+        border-bottom: 1px solid var(--glass-100);
     }
 
 .deal-footer {
@@ -502,7 +513,7 @@ a {
     color: #fff;
     padding: 12px 14px;
     border-bottom-left-radius: var(--radius);
-    border-bottom-right-radius: var(--radius)
+    border-bottom-right-radius: var(--radius);
 }
 
 .deal-info .title {
@@ -514,7 +525,7 @@ a {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: calc(2 * 1.25em)
+    min-height: calc(2 * 1.25em);
 }
 
 .deal-info .store {
@@ -529,7 +540,7 @@ a {
     column-gap: 12px;
     row-gap: 4px;
     align-items: end;
-    justify-items: end
+    justify-items: end;
 }
 
     .deal-price .discount {
@@ -544,7 +555,7 @@ a {
         border: 1px solid var(--discount-br);
         color: var(--discount-text);
         font-weight: 800;
-        font-size: 16px
+        font-size: 16px;
     }
 
     .deal-price .old {
@@ -639,7 +650,7 @@ a {
     padding: 26px;
     text-align: center;
     color: var(--text-dim);
-    background: var(--empty-bg)
+    background: var(--empty-bg);
 }
 
 .pager, .pagination {
@@ -649,7 +660,7 @@ a {
     justify-content: center;
     margin-top: 20px;
     padding: 0;
-    list-style: none
+    list-style: none;
 }
 
     .pager a, .pagination a, .pager button, .pagination button {
@@ -659,7 +670,7 @@ a {
         background: #151b1b;
         color: var(--text);
         text-decoration: none;
-        cursor: pointer
+        cursor: pointer;
     }
 
     .pager .active a, .pagination .active a {
@@ -682,7 +693,7 @@ a {
     border-top: 1px solid var(--glass-100);
     color: var(--text-dim);
     font-size: 13px;
-    z-index: 500
+    z-index: 500;
 }
 
 #blazor-error-ui {
@@ -697,7 +708,7 @@ a {
     color: #fff;
     border: 1px solid var(--glass-180);
     box-shadow: var(--shadow);
-    z-index: 1000
+    z-index: 1000;
 }
 
     #blazor-error-ui.show {
@@ -733,9 +744,89 @@ a {
     }
 }
 
-.stretched-link {
-    position: absolute;
-    inset: 0;
+body .game-details {
+    gap: 24px
+}
+
+    body .game-details .gd-meta {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 14px
+    }
+
+@media (max-width:900px) {
+    body .game-details .gd-meta {
+        grid-template-columns: 1fr
+    }
+}
+
+body .game-details .gd-meta .meta {
+    background: var(--surface);
+    border: 1px solid var(--glass-100);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center
+}
+
+    body .game-details .gd-meta .meta .meta-label {
+        color: var(--text-dim);
+        font-size: 13px;
+        min-width: 96px
+    }
+
+    body .game-details .gd-meta .meta .meta-value {
+        font-weight: 700;
+        overflow: hidden;
+        text-overflow: ellipsis
+    }
+
+body .game-details .gd-description p {
+    margin: 0 0 10px
+}
+
+body .game-details .gd-gallery {
+    display: block;
+    column-width: 280px;
+    column-gap: var(--gap)
+}
+
+@media (max-width:900px) {
+    body .game-details .gd-gallery {
+        column-width: 180px
+    }
+}
+
+body .game-details .gd-gallery .shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+    margin: 0 0 var(--gap);
+    background: var(--bg-800);
+    border: 1px solid var(--glass-100);
     border-radius: var(--radius);
-    z-index: 1
+    box-shadow: var(--shadow);
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid
+}
+
+body .game-details .deals-grid {
+    display: grid;
+    gap: var(--gap);
+    grid-template-columns: repeat(2,1fr)
+}
+
+@media (min-width:1400px) {
+    body .game-details .deals-grid {
+        grid-template-columns: repeat(3,1fr)
+    }
+}
+
+@media (max-width:760px) {
+    body .game-details .deals-grid {
+        grid-template-columns: 1fr
+    }
 }

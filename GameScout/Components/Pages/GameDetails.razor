@@ -7,52 +7,84 @@
 
 @if (_loading)
 {
-    <p>Loading...</p>
+    <div class="empty">Loading...</div>
 }
 else if (_details is null)
 {
 
-    <p>No details</p>
+    <div class="empty">No details.</div>
 }
 else
 {
-    <h4>@_details.Name</h4>
-    @if (_details.Metacritic is int mc)
-    {
-        <p>Metacritic: @mc</p>
-    }
-    @if (_details.Platforms?.Count > 0)
-    {
-        <p>Platforms: @string.Join(", ", _details.Platforms)</p>
-    }
-    @if (_details.Genres?.Count > 0)
-    {
-        <p>Genres: @string.Join(", ", _details.Genres)</p>
-    }
-    <p>@_details.Description</p>
+    <section class="game-details stack">
+        <h1 class="page-heading clamp-2">@_details.Name</h1>
 
-    @if (_details.Screenshots?.Count > 0)
-    {
-        <div>
-            @foreach (var s in _details.Screenshots.Take(6))
+        <section class="gd-meta">
+            @if (_details.Metacritic is int mc)
             {
-                <img src="@s" alt="screenshot" loading="lazy" />
+                <div class="meta">
+                    <span class="meta-label">Metacritic</span>
+                    <span class="meta-value">@mc</span>
+                </div>
             }
-        </div>
-    }
+            @if (_details.Platforms?.Count > 0)
+            {
+                <div class="meta">
+                    <span class="meta-label">Platforms</span>
+                    <span class="meta-value">@string.Join(", ", _details.Platforms)</span>
+                </div>
+            }
+            @if (_details.Genres?.Count > 0)
+            {
+                <div class="meta">
+                    <span class="meta-label">Genres</span>
+                    <span class="meta-value">@string.Join(", ", _details.Genres)</span>
+                </div>
+            }
+        </section>
 
-    <h5>Deals</h5>
-    @if (_deals.Count == 0)
-    {
-        <p>No deals.</p>
-    }
-    else
-    {
-        @foreach (var d in _deals)
+        <section class="card">
+            <div class="card-body gd-description">
+                @if (!string.IsNullOrWhiteSpace(_details?.Description))
+                {
+                    <p>@_details.Description</p>
+                }
+                else
+                {
+                    <p class="text-dim">No description available.</p>
+                }
+            </div>
+        </section>
+
+        @if (_details?.Screenshots?.Count > 0)
         {
-            <DealCard Deal="d" />
+            <section class="gd-gallery masonry">
+                @foreach (var s in _details.Screenshots.Take(6))
+                {
+                    <img class="shot" src="@s" alt="screenshot" loading="lazy" />
+                }
+            </section>
         }
-    }
+
+        @if (_deals?.Count > 0)
+        {
+            <section class="card">
+                <div class="card-header">Best deals</div>
+                <div class="card-body">
+                    <div class="deals-grid">
+                        @foreach (var d in _deals)
+                        {
+                            <DealCard Deal="d" />
+                        }
+                    </div>
+                </div>
+            </section>
+        }
+        else
+        {
+            <div class="empty">No deals available.</div>
+        }
+    </section>
 }
 
 @code {
