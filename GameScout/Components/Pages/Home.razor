@@ -1,8 +1,10 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject IGameCatalogService Catalog
+@inject NavigationManager Nav
 @using GameScout.Domain.Models
 @using GameScout.Domain.Enums
+@using GameScout.Services.Http
 @using Microsoft.AspNetCore.Components
 @inject GameScout.State.AppState State
 
@@ -71,20 +73,32 @@ else
 
     private async Task LoadPage(int page, string query, SortBy sort)
     {
-        _loading = true;
-        StateHasChanged();
+        try
+        {
+            _loading = true;
+            StateHasChanged();
 
-        var (items, total) = await Catalog.SearchAsync(
-            query,
-            platforms: null,
-            genres: null,
-            page: page,
-            pageSize: _pageSize,
-            sort: sort);
+            var (items, total) = await Catalog.SearchAsync(
+                query,
+                platforms: null,
+                genres: null,
+                page: page,
+                pageSize: _pageSize,
+                sort: sort);
 
-        _page = page;
-        State.SetSearchResults(query, items, total, sort, _page, _pageSize);
+            _page = page;
+            State.SetSearchResults(query, items, total, sort, _page, _pageSize);
 
-        _loading = false;
+            _loading = false;
+        }
+        catch (NetworkUnavailableException)
+        {
+            Nav.NavigateTo("/404", true);
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
     }
 }

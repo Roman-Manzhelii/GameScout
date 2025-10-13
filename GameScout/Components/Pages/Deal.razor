@@ -1,6 +1,8 @@
 ﻿@page "/deals"
 @rendermode InteractiveServer
+@inject NavigationManager Nav
 @using DealModel = GameScout.Domain.Models.Deal
+@using GameScout.Services.Http
 @inject GameScout.Services.Abstractions.IDealsService Deals
 
 <PageTitle>Hot Deals</PageTitle>
@@ -39,23 +41,33 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
+        try
+        {
+            if (!firstRender) return;
 
-        _loading = true;
-        StateHasChanged();
+            _loading = true;
+            StateHasChanged();
 
-        var top = await Deals.GetTopDealsAsync();
+            var top = await Deals.GetTopDealsAsync();
 
-        _all.Clear();
-        _all.AddRange(
-            top.Where(d => d.Savings >= 40m)
-               .OrderByDescending(d => d.Savings)
-               .ThenBy(d => d.Price)
-        );
+            _all.Clear();
+            _all.AddRange(
+                top.Where(d => d.Savings >= 40m)
+                   .OrderByDescending(d => d.Savings)
+                   .ThenBy(d => d.Price)
+            );
 
-        Slice();
-        _loading = false;
-        StateHasChanged();
+            Slice();
+        }
+        catch (NetworkUnavailableException)
+        {
+            Nav.NavigateTo("/404", true);
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
     }
 
     private Task GoToPage(int page)

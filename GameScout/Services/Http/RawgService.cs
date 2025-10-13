@@ -70,7 +70,7 @@ public class RawgService : BaseHttpService, IGameCatalogService
                 return (c.items, c.total);
         }
 
-        using var resp = await _http.GetAsync(url, ct);
+        using var resp = await GetSafeAsync(url, ct);
         resp.EnsureSuccessStatusCode();
 
         await using var stream = await resp.Content.ReadAsStreamAsync(ct);
@@ -131,14 +131,14 @@ public class RawgService : BaseHttpService, IGameCatalogService
         var keyQs = string.IsNullOrEmpty(_apiKey) ? "" : $"?key={_apiKey}";
 
         // main details
-        using var resp = await _http.GetAsync($"games/{id}{keyQs}", ct);
+        using var resp = await GetSafeAsync($"games/{id}{keyQs}", ct);
         resp.EnsureSuccessStatusCode();
         await using var s1 = await resp.Content.ReadAsStreamAsync(ct);
         var d = await JsonSerializer.DeserializeAsync<RawgDetails>(s1, _json, ct);
         if (d is null) return null;
 
         // screenshots
-        using var resp2 = await _http.GetAsync($"games/{id}/screenshots{keyQs}", ct);
+        using var resp2 = await GetSafeAsync($"games/{id}/screenshots{keyQs}", ct);
         resp2.EnsureSuccessStatusCode();
         await using var s2 = await resp2.Content.ReadAsStreamAsync(ct);
         var shots = await JsonSerializer.DeserializeAsync<RawgScreens>(s2, _json, ct);

@@ -2,8 +2,10 @@
 @rendermode InteractiveServer
 @inject IGameCatalogService Catalog
 @inject IDealsService DealsService
+@inject NavigationManager Nav
 @using GameDetailsModel = GameScout.Domain.Models.GameDetails
 @using DealModel = GameScout.Domain.Models.Deal
+@using GameScout.Services.Http
 
 @if (_loading)
 {
@@ -99,13 +101,25 @@ else
     protected override async Task OnParametersSetAsync()
     {
         _loading = true;
-        _details = await Catalog.GetDetailsAsync(id);
-        _deals.Clear();
-        if (!string.IsNullOrWhiteSpace(_details?.Name))
+        StateHasChanged();
+        try
         {
-            var deals = await DealsService.GetDealsByTitleAsync(_details.Name);
-            _deals.AddRange(deals);
+            _details = await Catalog.GetDetailsAsync(id);
+            _deals.Clear();
+            if (!string.IsNullOrWhiteSpace(_details?.Name))
+            {
+                var deals = await DealsService.GetDealsByTitleAsync(_details.Name);
+                _deals.AddRange(deals);
+            }
         }
-        _loading = false;
+        catch (NetworkUnavailableException)
+        {
+            Nav.NavigateTo("/404", true);
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
     }
 }
