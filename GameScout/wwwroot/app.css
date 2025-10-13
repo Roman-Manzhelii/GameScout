@@ -92,6 +92,7 @@ a {
     border-right: 1px solid var(--glass-100);
     padding: 18px 14px;
     color: #fff;
+    z-index: 2000
 }
 
 .brand {
@@ -112,7 +113,8 @@ a {
         height: 12px;
         border-radius: 50%;
         background: var(--teal-600);
-        border: 2px solid var(--glass-160)
+        border: 2px solid var(--glass-160);
+        display: none
     }
 
 .nav {
@@ -731,16 +733,66 @@ a {
 }
 
 @media (max-width:720px) {
-    :root {
-        --sidebar-w: 84px
+    #app-shell {
+        grid-template-columns: 1fr;
+        grid-template-areas: "sidebar" "main"
+    }
+
+    #sidebar {
+        position: sticky;
+        top: 0;
+        height: auto;
+        overflow: visible;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-100)
+    }
+
+        #sidebar .brand {
+            display: none
+        }
+
+    .nav {
+        flex-direction: row;
+        gap: 8px;
+        margin-left: auto;
+        justify-content: space-between;
+        flex: 1
+    }
+
+    .nav-item {
+        padding: 8px 10px
+    }
+
+    .content {
+        padding: 16px 16px calc(var(--footer-h) + 16px)
     }
 
     .app-footer {
-        left: 84px
+        left: 0
     }
 
-    #sidebar .brand span {
-        display: none
+    .search-form {
+        max-width: none;
+        width: 100%
+    }
+
+        .search-form .field {
+            flex: 1;
+            min-width: 0
+        }
+
+        .search-form .btn, .search-form button {
+            flex: 0 0 auto
+        }
+}
+
+@media (min-width:721px) {
+    #sidebar .brand {
+        display: flex
     }
 }
 
