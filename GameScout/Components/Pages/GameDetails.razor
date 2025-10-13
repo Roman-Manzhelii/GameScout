@@ -24,9 +24,12 @@ else
             {
                 <div class="meta">
                     <span class="meta-label">Metacritic</span>
-                    <span class="meta-value">@mc</span>
+                    <span class="meta-value">
+                        <span class="score @(mc >= 85 ? "good" : mc >= 70 ? "mixed" : "bad")">@mc</span>
+                    </span>
                 </div>
             }
+
             @if (_details.Platforms?.Count > 0)
             {
                 <div class="meta">

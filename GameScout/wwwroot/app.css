@@ -112,7 +112,7 @@ a {
         height: 12px;
         border-radius: 50%;
         background: var(--teal-600);
-        border: 2px solid var(--glass-160);
+        border: 2px solid var(--glass-160)
     }
 
 .nav {
@@ -750,11 +750,17 @@ body .game-details {
 
     body .game-details .gd-meta {
         display: grid;
-        grid-template-columns: repeat(3,1fr);
-        gap: 14px
+        grid-template-columns: repeat(3,minmax(260px,1fr));
+        gap: 16px;
     }
 
-@media (max-width:900px) {
+@media (max-width:1200px) {
+    body .game-details .gd-meta {
+        grid-template-columns: repeat(2,minmax(260px,1fr))
+    }
+}
+
+@media (max-width:720px) {
     body .game-details .gd-meta {
         grid-template-columns: 1fr
     }
@@ -763,24 +769,56 @@ body .game-details {
 body .game-details .gd-meta .meta {
     background: var(--surface);
     border: 1px solid var(--glass-100);
-    border-radius: 12px;
-    padding: 12px 14px;
+    border-radius: 16px;
+    padding: 18px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     gap: 10px;
-    align-items: center
+    min-height: 96px;
 }
 
     body .game-details .gd-meta .meta .meta-label {
         color: var(--text-dim);
-        font-size: 13px;
-        min-width: 96px
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: .2px;
     }
 
     body .game-details .gd-meta .meta .meta-value {
-        font-weight: 700;
-        overflow: hidden;
-        text-overflow: ellipsis
+        font-weight: 800;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
     }
+
+    body .game-details .gd-meta .meta .score {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 84px;
+        height: 56px;
+        padding: 0 16px;
+        font-size: 24px;
+        border-radius: 14px;
+        border: 1px solid var(--glass-100);
+    }
+
+        body .game-details .gd-meta .meta .score.good {
+            background: var(--ok-bg);
+            border-color: var(--ok-br)
+        }
+
+        body .game-details .gd-meta .meta .score.mixed {
+            background: var(--warn-bg);
+            border-color: var(--warn-br)
+        }
+
+        body .game-details .gd-meta .meta .score.bad {
+            background: var(--alert-err-bg);
+            border-color: var(--alert-err-br)
+        }
 
 body .game-details .gd-description p {
     margin: 0 0 10px
@@ -830,3 +868,16 @@ body .game-details .deals-grid {
         grid-template-columns: 1fr
     }
 }
+
+body .game-details .card:has(.gd-description) {
+    transform: none
+}
+
+    body .game-details .card:has(.gd-description):hover {
+        transform: none;
+        box-shadow: var(--shadow)
+    }
+
+    body .game-details .card:has(.gd-description):focus-within {
+        box-shadow: var(--shadow)
+    }
