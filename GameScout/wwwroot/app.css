@@ -665,20 +665,53 @@ a {
     list-style: none;
 }
 
-    .pager a, .pagination a, .pager button, .pagination button {
-        padding: 8px 12px;
-        border-radius: 10px;
+    .pager a, .pager button, .pagination a, .pagination button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        height: 40px;
+        padding: 0 14px;
+        border-radius: 12px;
         border: 1px solid var(--glass-180);
         background: #151b1b;
         color: var(--text);
         text-decoration: none;
         cursor: pointer;
+        transition: background-color .15s,border-color .15s,transform .15s,box-shadow .15s;
     }
 
-    .pager .active a, .pagination .active a {
+        .pager a:hover, .pager button:hover, .pagination a:hover, .pagination button:hover {
+            background: var(--btn-bg-hover);
+            border-color: var(--glass-160);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(0,0,0,.22);
+            text-decoration: none;
+        }
+
+    .pager .active a, .pager .active button,
+    .pagination .active a, .pagination .active button,
+    .pager [aria-current="page"], .pagination [aria-current="page"] {
         background: var(--teal-900);
         border-color: var(--teal-900);
-        color: #fff
+        color: #fff;
+        transform: none;
+        box-shadow: 0 0 0 1px rgba(255,255,255,.06) inset;
+        cursor: default;
+    }
+
+    .pager [disabled], .pagination [disabled],
+    .pager .disabled a, .pagination .disabled a {
+        opacity: .45;
+        cursor: not-allowed;
+        pointer-events: none;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .pager a:focus-visible, .pager button:focus-visible,
+    .pagination a:focus-visible, .pagination button:focus-visible {
+        box-shadow: var(--ring);
     }
 
 .app-footer {
