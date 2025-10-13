@@ -1,20 +1,28 @@
 ﻿@using Microsoft.AspNetCore.Components
+@inject NavigationManager Nav
 
 <nav aria-label="pagination">
     <ul class="pagination">
         <li class="page-item @(Page <= 1 ? "disabled" : null)">
-            <button class="page-link" @onclick="() => Go(Page - 1)">Prev</button>
+            <a class="page-link"
+               href="@($"{new Uri(Nav.Uri).PathAndQuery}#page-heading")"
+               @onclick="() => Go(Page - 1)">Prev</a>
         </li>
 
         @foreach (var p in Pages())
         {
             <li class="page-item @(p == Page ? "active" : null)">
-                <button class="page-link" @onclick="() => Go(p)">@p</button>
+                <a class="page-link"
+                   href="@($"{new Uri(Nav.Uri).PathAndQuery}#page-heading")"
+                   aria-current="@(p == Page ? "page" : null)"
+                   @onclick="() => Go(p)">@p</a>
             </li>
         }
 
         <li class="page-item @(Page >= TotalPages ? "disabled" : null)">
-            <button class="page-link" @onclick="() => Go(Page + 1)">Next</button>
+            <a class="page-link"
+               href="@($"{new Uri(Nav.Uri).PathAndQuery}#page-heading")"
+               @onclick="() => Go(Page + 1)">Next</a>
         </li>
     </ul>
 </nav>

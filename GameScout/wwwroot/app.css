@@ -157,7 +157,8 @@ a {
 }
 
 .page-heading {
-    margin: 0
+    margin: 0;
+    scroll-margin-top: 20px
 }
 
 .stack {
@@ -375,22 +376,22 @@ a {
     }
 }
 
-.cards-masonry > * {
-    display: block;
-    width: 100%;
-    margin: 0 0 var(--gap);
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    -moz-column-break-inside: avoid
-}
+    .cards-masonry > * {
+        display: block;
+        width: 100%;
+        margin: 0 0 var(--gap);
+        break-inside: avoid;
+        -webkit-column-break-inside: avoid;
+        -moz-column-break-inside: avoid
+    }
 
     .cards-masonry > * > .card,
     .cards-masonry > * > .game-card,
     .cards-masonry > * > .deal-card {
-        display: block;
-        width: 100%;
-        break-inside: avoid
-    }
+            display: block;
+            width: 100%;
+            break-inside: avoid
+        }
 
 .game-card {
     position: relative;
@@ -829,6 +830,12 @@ a {
     }
 }
 
+@media (min-width:1400px) {
+    .deals-grid {
+        grid-template-columns: repeat(3,1fr)
+    }
+}
+
 body .game-details {
     gap: 24px
 }
@@ -921,20 +928,20 @@ body .game-details .gd-gallery {
     }
 }
 
-body .game-details .gd-gallery .shot {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: auto;
-    object-fit: contain;
-    margin: 0 0 var(--gap);
-    background: var(--bg-800);
-    border: 1px solid var(--glass-100);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid
-}
+    body .game-details .gd-gallery .shot {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        object-fit: contain;
+        margin: 0 0 var(--gap);
+        background: var(--bg-800);
+        border: 1px solid var(--glass-100);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        break-inside: avoid;
+        -webkit-column-break-inside: avoid
+    }
 
 body .game-details .deals-grid {
     display: grid;
@@ -966,3 +973,32 @@ body .game-details .card:has(.gd-description) {
     body .game-details .card:has(.gd-description):focus-within {
         box-shadow: var(--shadow)
     }
+
+@media (max-width:420px) {
+    .pager, .pagination {
+        gap: 6px;
+        margin-top: 16px
+    }
+
+        .pager a, .pager button, .pagination a, .pagination button {
+            min-width: 36px;
+            height: 34px;
+            padding: 0 10px;
+            font-size: 13px;
+            border-radius: 10px
+        }
+}
+
+@media (max-width:360px) {
+    .pager, .pagination {
+        gap: 4px
+    }
+
+        .pager a, .pager button, .pagination a, .pagination button {
+            min-width: 30px;
+            height: 30px;
+            padding: 0 8px;
+            font-size: 12px;
+            border-radius: 8px
+        }
+}
