@@ -1,11 +1,11 @@
 ﻿<form class="search-form" onsubmit="return false">
     <div class="field">
+        @* Ref: Submit on Enter key in Blazor *@
         <input id="q"
                class="input control-lg"
                placeholder="Type game title"
                value="@Text"
                @onchange="OnInput"
-               @* Ref: Submit on Enter key in Blazor *@
                @onkeydown="@(e => { if (e.Key == "Enter") _ = Submit(); })" />
     </div>
     <button class="btn btn-primary control-lg" disabled="@Busy" @onclick="Submit">Search</button>
