@@ -47,6 +47,7 @@
 @code {
     private bool _loading;
 
+    @* Ref: First-render backfill of missing images from RAWG, then persist to localStorage *@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
@@ -73,6 +74,7 @@
         _loading = false; StateHasChanged();
     }
 
+    @* Ref: JS confirm via IJSRuntime (alert/confirm) *@
     private async Task Remove(SavedItem it)
     {
         var ok = await JS.InvokeAsync<bool>("confirm", $"Remove «{it.Name}» from Backlog?");

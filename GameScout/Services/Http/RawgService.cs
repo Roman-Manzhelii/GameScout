@@ -18,6 +18,8 @@ public class RawgService : BaseHttpService, IGameCatalogService
     private static readonly object _lock = new();
     private static readonly TimeSpan _ttl = TimeSpan.FromMinutes(5);
 
+    // Ref: RAWG API base URL + key)
+    // https://api.rawg.io/docs
     public RawgService(HttpClient http, ILogger<RawgService> log, IConfiguration cfg) : base(http, log)
     {
         _apiKey = Environment.GetEnvironmentVariable("RAWG_API_KEY") ?? "";
@@ -30,7 +32,8 @@ public class RawgService : BaseHttpService, IGameCatalogService
         }
     }
 
-
+    // Games list + filtering/paging (?search=, page, page_size)
+    // https://api.rawg.io/docs/#operation/games_list
     public async Task<(IReadOnlyList<GameSummary> Items, int Total)> SearchAsync(
         string? query, IEnumerable<string>? platforms, IEnumerable<string>? genres,
         int page, int pageSize, SortBy? sort, CancellationToken ct = default)
@@ -122,6 +125,8 @@ public class RawgService : BaseHttpService, IGameCatalogService
     private static readonly Dictionary<int, (DateTimeOffset exp, GameDetails data)> _detailsCache = new();
     private static readonly TimeSpan _detailsTtl = TimeSpan.FromMinutes(30);
 
+    // Game details endpoint: GET /games/{id}?key=...
+    // https://api.rawg.io/docs/#operation/games_read
     public async Task<GameDetails?> GetDetailsAsync(int id, CancellationToken ct = default)
     {
         lock (_lock)
@@ -137,7 +142,9 @@ public class RawgService : BaseHttpService, IGameCatalogService
         var d = await JsonSerializer.DeserializeAsync<RawgDetails>(s1, _json, ct);
         if (d is null) return null;
 
-        // screenshots
+        // Screenshots endpoint: GET /games/{id}/screenshots?key=...
+        // https://api.rawg.io/docs/#operation/screenshots_list
+
         using var resp2 = await GetSafeAsync($"games/{id}/screenshots{keyQs}", ct);
         resp2.EnsureSuccessStatusCode();
         await using var s2 = await resp2.Content.ReadAsStreamAsync(ct);

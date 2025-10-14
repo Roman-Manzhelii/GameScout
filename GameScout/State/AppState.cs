@@ -1,4 +1,7 @@
-﻿using GameScout.Domain.Models;
+﻿// Ref: Blazor JS interop + localStorage pattern
+// https://learn.microsoft.com/aspnet/core/blazor/javascript-interoperability
+
+using GameScout.Domain.Models;
 using GameScout.Domain.Enums;
 using GameScout.Services;
 
@@ -13,6 +16,9 @@ public sealed class AppState
     public List<SavedItem> Backlog { get; } = new();
 
     public AppState(ILocalStorage ls) => _ls = ls ?? throw new ArgumentNullException(nameof(ls));
+
+    // Read backlog from browser localStorage via ILocalStorage (JSON)
+    // https://developer.mozilla.org/docs/Web/API/Window/localStorage
 
     public async Task EnsureLoadedAsync()
     {

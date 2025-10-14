@@ -5,7 +5,11 @@
     <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
         <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+
+            @* Ref: Move focus after navigation for accessibility (FocusOnNavigate)
+               https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.components.routing.focusonnavigate *@
+
+        <FocusOnNavigate RouteData="routeData" Selector="h3" />
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(Layout.MainLayout)">

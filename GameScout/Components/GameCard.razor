@@ -27,6 +27,7 @@
     [Parameter] public GameSummary? Game { get; set; }
     private bool inBacklog;
 
+    @* Ref: Post-render state update pattern (check backlog membership) *@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender || Game is null) return;

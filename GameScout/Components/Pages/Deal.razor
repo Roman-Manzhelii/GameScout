@@ -39,6 +39,7 @@ else
     private int _page = 1;
     private int _pageSize = 12;
 
+    @* Ref: Load and slice top deals; navigate to /404 on network errors *@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try

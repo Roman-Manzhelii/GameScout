@@ -41,6 +41,7 @@
     private string _gameTitle = string.Empty;
     private string _storeName = string.Empty;
 
+    @* Ref: CheapShark title + store come as "Game Title | Store"; split for UI *@
     protected override void OnParametersSet()
     {
         var src = Deal?.Store ?? string.Empty;

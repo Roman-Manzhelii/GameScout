@@ -2,6 +2,8 @@
 using GameScout.Domain.Models;
 
 namespace GameScout.Services.Abstractions;
+
+// Ref: Contracts for RAWG/CheapShark services
 public interface IGameCatalogService
 {
     Task<(IReadOnlyList<GameSummary> Items, int Total)> SearchAsync(

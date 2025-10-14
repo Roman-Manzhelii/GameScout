@@ -18,6 +18,8 @@ public class CheapSharkService : BaseHttpService, IDealsService
     public CheapSharkService(HttpClient http, ILogger<CheapSharkService> log, IConfiguration cfg)
         : base(http, log)
     {
+        // Ref: CheapShark API base endpoints (/stores, /deals, /games)
+        // https://apidocs.cheapshark.com
         if (_http.BaseAddress is null)
         {
             var baseUrl = cfg["Http:CheapShark:BaseUrl"];
@@ -92,9 +94,14 @@ public class CheapSharkService : BaseHttpService, IDealsService
         }
     }
 
+    // Top deals (/deals?sortBy=DealRating&pageSize=...)
+    // https://apidocs.cheapshark.com/#3a5c1f6f-3a2a-4e9f-8a1a-9a6b2a0c0ddc
+
     public async Task<IReadOnlyList<Deal>> GetTopDealsAsync(CancellationToken ct = default)
     {
         await EnsureStoresAsync(ct);
+        // CheapShark deal redirect
+        // https://apidocs.cheapshark.com/#2a6f5e9c-redirect-deal
 
         var url = "deals?pageSize=120&sortBy=DealRating";
         if (TryGet(url, out var cached)) return cached;
@@ -108,6 +115,8 @@ public class CheapSharkService : BaseHttpService, IDealsService
         return items;
     }
 
+    // Fetch active stores list (/stores) and cache for 24h
+    // https://apidocs.cheapshark.com/#b964d3cf-c1c8-4a3c-92d6-1aa87f1b5803
     private async Task EnsureStoresAsync(CancellationToken ct = default)
     {
         if (_storesExp > DateTimeOffset.UtcNow && _storeNames.Count > 0) return;

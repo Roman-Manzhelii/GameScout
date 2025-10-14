@@ -13,6 +13,9 @@ public abstract class BaseHttpService
         _log = log;
     }
 
+    // Ref: Resilient HttpClient usage (IHttpClientFactory)
+    // https://learn.microsoft.com/aspnet/core/fundamentals/http-requests
+
     protected async Task<HttpResponseMessage> GetSafeAsync(string url, CancellationToken ct = default)
     {
         try
@@ -26,6 +29,7 @@ public abstract class BaseHttpService
         }
     }
 
+    // Normalize common network exceptions into a domain exception
     private static bool IsNetworkException(Exception ex) =>
         ex is HttpRequestException or IOException or SocketException or TaskCanceledException;
 }

@@ -5,6 +5,7 @@
                placeholder="Type game title"
                value="@Text"
                @onchange="OnInput"
+               @* Ref: Submit on Enter key in Blazor *@
                @onkeydown="@(e => { if (e.Key == "Enter") _ = Submit(); })" />
     </div>
     <button class="btn btn-primary control-lg" disabled="@Busy" @onclick="Submit">Search</button>
@@ -12,6 +13,7 @@
 
 @code {
     [Parameter] public string? Text { get; set; }
+    @* Ref: Two-way binding via EventCallback<T> *@
     [Parameter] public EventCallback<string?> TextChanged { get; set; }
     [Parameter] public EventCallback OnSearch { get; set; }
     [Parameter] public bool Busy { get; set; }

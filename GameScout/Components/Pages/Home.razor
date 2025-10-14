@@ -61,7 +61,8 @@ else
         }
     }
 
-    private async Task OnSearchClicked()
+    @* Ref: Trigger search on Enter via SearchBar (onkeydown) *@
+        private async Task OnSearchClicked()
     {
         var q = _query?.Trim();
         if (string.IsNullOrEmpty(q)) return;
@@ -73,6 +74,8 @@ else
 
     private async Task LoadPage(int page, string query, SortBy sort)
     {
+        @* Ref: Navigate to /404 on network errors (ErrorBoundary guidance)
+           https://learn.microsoft.com/aspnet/core/blazor/fundamentals/handle-errors *@
         try
         {
             _loading = true;

@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿// Ref: Blazor JS interop call patterns
+// https://learn.microsoft.com/aspnet/core/blazor/javascript-interoperability
+
+using System.Text.Json;
 using Microsoft.JSInterop;
 
 namespace GameScout.Services;
@@ -15,6 +18,8 @@ public sealed class LocalStorage : ILocalStorage
     private static readonly JsonSerializerOptions _json = new() { PropertyNameCaseInsensitive = true };
     public LocalStorage(IJSRuntime js) => _js = js;
 
+    // Web Storage API (localStorage) contract
+    // https://developer.mozilla.org/docs/Web/API/Window/localStorage
     public Task SetAsync<T>(string key, T value) =>
         _js.InvokeVoidAsync("localStorage.setItem", key, JsonSerializer.Serialize(value, _json)).AsTask();
 
