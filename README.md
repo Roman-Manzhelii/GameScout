@@ -1,6 +1,24 @@
 # GameScout
 
 A minimal game discovery app built with **ASP.NET Core Blazor** (.NET 8). It searches games via **RAWG**, shows details and screenshots, surfaces **best deals** via **CheapShark**, and lets you maintain a local **Backlog** using browser storage.
+<img width="1899" height="972" alt="image" src="https://github.com/user-attachments/assets/fde0ada5-cb8f-45b2-815a-66e406951ff0" />
+<img width="1902" height="971" alt="image" src="https://github.com/user-attachments/assets/1177ef83-6b61-4e21-ad53-f5b268545b0a" />
+<img width="1900" height="968" alt="image" src="https://github.com/user-attachments/assets/1d2acc0b-1b85-4770-ba13-f1b0bd8cdc5e" />
+
+<img width="1897" height="971" alt="image" src="https://github.com/user-attachments/assets/c9f8b133-f2b7-4c82-8940-8610c2e99067" />
+<img width="1896" height="969" alt="image" src="https://github.com/user-attachments/assets/cc9adac7-b6fc-4f95-9b91-e17d3eae6b3f" />
+<img width="1899" height="969" alt="image" src="https://github.com/user-attachments/assets/331b98a4-9b94-4bb5-87d2-a6f5f63dec27" />
+
+<img width="1902" height="972" alt="image" src="https://github.com/user-attachments/assets/f1114763-ddb7-44a2-b744-a5e0ef3a95f9" />
+<img width="1896" height="969" alt="image" src="https://github.com/user-attachments/assets/3c4725e6-71be-4bb7-8935-e5e241db9415" />
+
+<img width="1909" height="975" alt="image" src="https://github.com/user-attachments/assets/da1fa941-ac96-44aa-a83b-6bcd02991b30" />
+
+<img width="636" height="851" alt="image" src="https://github.com/user-attachments/assets/ef49a5b4-f006-4ac5-8b61-5edaa241caff" />
+<img width="465" height="834" alt="image" src="https://github.com/user-attachments/assets/15ecb0ad-9972-4230-bfd4-cc04d56a31db" />
+
+
+
 
 ---
 
