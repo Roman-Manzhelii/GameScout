@@ -93,17 +93,6 @@ RAWG_API_KEY=your_rawg_key_here
 
 > The app reads configuration from environment (or `.env` if enabled) and passes `?key=...` to RAWG requests.
 
-### Restore & run
-
-```bash
-dotnet restore
-dotnet run
-```
-
-Open the printed URL. Default `https://localhost::7219`.
-
----
-
 ## Key implementation notes
 
 * **JS interop timing**: calls to `localStorage` occur in `OnAfterRenderAsync` to avoid prerender issues.
